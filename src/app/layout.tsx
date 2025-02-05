@@ -3,13 +3,14 @@ import type { Metadata } from "next";
 import { ReactNode } from "react";
 
 // Local Imports
+import { ScreenSize } from "@/shared/components/screen-size";
 import { cn } from "@/shared/lib/utils/cn";
 import { notoSans } from "@/styles/fonts";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "Books FE",
-  description: "Books FE",
+  title: "Book Inventory",
+  description: "Book Inventory",
 };
 
 interface Props {
@@ -25,11 +26,8 @@ const RootLayout = async ({ children }: Props) => {
           notoSans.className,
         )}
       >
-        <div className="flex min-h-dvh flex-col">
-          {/* Header */}
-          <div className="flex-1 py-4 md:py-6">{children}</div>
-          {/* Footer */}
-        </div>
+        <ScreenSize />
+        {children}
       </body>
     </html>
   );
