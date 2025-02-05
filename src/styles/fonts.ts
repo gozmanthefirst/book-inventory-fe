@@ -1,20 +1,13 @@
 // External Imports
-import { Noto_Sans, Noto_Serif, Young_Serif } from "next/font/google";
+import { Alegreya, Epilogue } from "next/font/google";
 
-export const notoSerif = Noto_Serif({
-  subsets: ["latin"],
-  display: "swap",
-  weight: "400",
-  style: ["normal", "italic"],
-});
-export const notoSans = Noto_Sans({
+export const alegreya = Alegreya({
   subsets: ["latin"],
   display: "swap",
   style: ["normal", "italic"],
 });
-export const youngSerif = Young_Serif({
+export const epilogue = Epilogue({
   subsets: ["latin"],
   display: "swap",
-  weight: "400",
-  style: ["normal"],
+  style: ["normal", "italic"],
 });
