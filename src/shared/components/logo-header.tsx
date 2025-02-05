@@ -5,9 +5,8 @@ import { HTMLAttributes, Ref } from "react";
 
 // Local Imports
 import { cn } from "../lib/utils/cn";
-import { Container } from "./container";
 
-export interface LogoHeaderProps extends HTMLAttributes<HTMLDivElement> {
+interface LogoHeaderProps extends HTMLAttributes<HTMLDivElement> {
   ref?: Ref<HTMLDivElement>;
 }
 
@@ -18,7 +17,7 @@ export const LogoHeader = ({
   ...props
 }: LogoHeaderProps) => {
   return (
-    <Container
+    <header
       ref={ref}
       className={cn("sticky top-0 z-50 flex justify-start py-6", className)}
       {...props}
@@ -30,6 +29,6 @@ export const LogoHeader = ({
       </Link>
 
       {children}
-    </Container>
+    </header>
   );
 };

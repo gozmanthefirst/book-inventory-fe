@@ -4,7 +4,7 @@
 import { useEffect, useState } from "react";
 
 // Local Imports
-import { notoSans } from "@/styles/fonts";
+import { alegreya } from "@/styles/fonts";
 import { cn } from "../lib/utils/cn";
 
 export const ScreenSize = () => {
@@ -33,9 +33,9 @@ export const ScreenSize = () => {
   return (
     <div
       className={cn(
-        "fixed right-3 bottom-3 z-500 flex items-center space-x-2 rounded-full bg-brand-400 px-2.5 py-1 text-xs font-bold text-background shadow-md transition-opacity duration-300",
+        "fixed right-3 bottom-3 z-500 flex items-center space-x-2 rounded-full bg-brand-400 px-2.5 py-1 text-sm font-semibold text-background shadow-md transition-opacity duration-300",
         dimensions.width === 0 ? "opacity-0" : "opacity-100",
-        notoSans.className,
+        alegreya.className,
       )}
     >
       <span>

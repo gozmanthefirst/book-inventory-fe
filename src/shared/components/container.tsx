@@ -4,7 +4,7 @@ import { HTMLAttributes, Ref } from "react";
 // Local Imports
 import { cn } from "../lib/utils/cn";
 
-export interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
+interface ContainerProps extends HTMLAttributes<HTMLDivElement> {
   ref?: Ref<HTMLDivElement>;
 }
 
