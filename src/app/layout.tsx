@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 // Local Imports
 import { ScreenSize } from "@/shared/components/screen-size";
 import { cn } from "@/shared/lib/utils/cn";
-import { notoSans } from "@/styles/fonts";
+import { epilogue } from "@/styles/fonts";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -23,7 +23,7 @@ const RootLayout = async ({ children }: Props) => {
       <body
         className={cn(
           `bg-background text-foreground antialiased`,
-          notoSans.className,
+          epilogue.className,
         )}
       >
         <ScreenSize />
