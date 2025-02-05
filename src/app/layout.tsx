@@ -1,20 +1,11 @@
 // External Imports
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ReactNode } from "react";
 
 // Local Imports
+import { cn } from "@/shared/lib/utils/cn";
+import { notoSans } from "@/styles/fonts";
 import "@/styles/globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Books FE",
@@ -29,9 +20,16 @@ const RootLayout = async ({ children }: Props) => {
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={cn(
+          `bg-background text-foreground antialiased`,
+          notoSans.className,
+        )}
       >
-        {children}
+        <div className="flex min-h-dvh flex-col">
+          {/* Header */}
+          <div className="flex-1 py-4 md:py-6">{children}</div>
+          {/* Footer */}
+        </div>
       </body>
     </html>
   );
