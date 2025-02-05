@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -8,10 +8,26 @@
   --breakpoint-sm: 400px;
   --breakpoint-smd: 532px;
   --breakpoint-md: 768px;
-  --breakpoint-lg: 976px;
-  --breakpoint-xl: 1440px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
   --breakpoint-2xl: 1536px;
   --breakpoint-3xl: 1920px;
+
+  --color-background: oklch(96.47% 0.0158 73.68);
+  --color-foreground: oklch(12.21% 0 0);
+
+  --color-brand-100: oklch(91.1% 0.0564 262);
+  --color-brand-200: oklch(77.7% 0.1626 262);
+  --color-brand-300: oklch(49.9% 0.252 262);
+  --color-brand-400: oklch(54.5% 0.252 262);
+  --color-brand-500: oklch(50.3% 0.1809 262);
+  --color-brand-600: oklch(45% 0.1585 262);
+  --color-brand-700: oklch(40.4% 0.1458 262);
+  --color-brand-800: oklch(36.1% 0.1378 262);
+  --color-brand-900: oklch(31.8% 0.1229 262);
+  --color-brand-1000: oklch(27.1% 0.0914 262);
+  --color-brand-1100: oklch(20.7% 0.0398 262);
+  --color-brand-1200: oklch(17.8% 0.0326 262);
 }
 
 @utility container {
@@ -43,20 +59,19 @@
   }
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+.tiny-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #666 transparent;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Hide increase/buttons controls in number input for Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+/* Hide increase/buttons controls in number input for Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
 }
