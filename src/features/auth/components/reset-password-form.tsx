@@ -35,8 +35,8 @@ export const ResetPasswordForm = () => {
         </p>
       </div>
 
-      <form className="flex flex-col gap-6">
-        <div>
+      <form>
+        <>
           <div className="group relative">
             <InputIcon>
               <TbLockPassword size={18} />
@@ -44,7 +44,7 @@ export const ResetPasswordForm = () => {
             <Input placeholder="password" type="password" className="px-10" />
             <InputIcon
               direction="end"
-              onClick={() => console.log("click!")}
+              onClick={() => {}}
               className="cursor-pointer"
             >
               <TbEye size={18} />
@@ -61,20 +61,20 @@ export const ResetPasswordForm = () => {
             />
             <InputIcon
               direction="end"
-              onClick={() => console.log("click!")}
+              onClick={() => {}}
               className="cursor-pointer"
             >
               <TbEye size={18} />
             </InputIcon>
           </div>
-        </div>
-
-        <div>
-          <Button className="w-full" size={"lg"}>
-            Reset password
-          </Button>
-        </div>
+        </>
       </form>
+
+      <div>
+        <Button className="w-full" size={"lg"}>
+          Reset password
+        </Button>
+      </div>
     </div>
   );
 };

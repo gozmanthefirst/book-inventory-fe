@@ -40,8 +40,8 @@ export const SignInForm = () => {
         </p>
       </div>
 
-      <form className="flex flex-col gap-6">
-        <div>
+      <form>
+        <>
           <div className="group relative">
             <InputIcon>
               <TbAt size={18} />
@@ -55,28 +55,28 @@ export const SignInForm = () => {
             <Input placeholder="password" type="password" className="px-10" />
             <InputIcon
               direction="end"
-              onClick={() => console.log("click!")}
+              onClick={() => {}}
               className="cursor-pointer"
             >
               <TbEye size={18} />
             </InputIcon>
           </div>
-        </div>
-
-        <div className="flex flex-col gap-3">
-          <Button className="w-full" size={"lg"}>
-            Sign in
-          </Button>
-
-          {/* Forgot Password */}
-          <Link
-            href={"/forgot-password"}
-            className="text-xs text-brand-400 lg:hover:underline lg:hover:underline-offset-2"
-          >
-            Forgot your password?
-          </Link>
-        </div>
+        </>
       </form>
+
+      <div className="flex flex-col gap-3">
+        <Button className="w-full" size={"lg"}>
+          Sign in
+        </Button>
+
+        {/* Forgot Password */}
+        <Link
+          href={"/forgot-password"}
+          className="text-xs text-brand-400 lg:hover:underline lg:hover:underline-offset-2"
+        >
+          Forgot your password?
+        </Link>
+      </div>
 
       <div className="relative flex items-center justify-center">
         <div className="my-2 h-px w-full bg-neutral-300" />

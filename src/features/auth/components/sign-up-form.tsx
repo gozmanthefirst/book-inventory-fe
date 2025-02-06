@@ -1,6 +1,7 @@
 "use client";
 
 // External Imports
+import { useForm } from "@tanstack/react-form";
 import Link from "next/link";
 import {
   TbAt,
@@ -18,6 +19,18 @@ import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
 
 export const SignUpForm = () => {
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+    onSubmit: async ({ value }) => {
+      console.log(value);
+    },
+  });
+
   return (
     <div className="flex w-full max-w-md flex-col gap-6">
       <div className="flex flex-col gap-1">
@@ -41,20 +54,49 @@ export const SignUpForm = () => {
         </p>
       </div>
 
-      <form className="flex flex-col gap-6">
-        <div>
+      <form
+        id="sign-up-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <>
+          {/* Name */}
           <div className="group relative">
             <InputIcon>
               <TbUser size={18} />
             </InputIcon>
-            <Input placeholder="name" type="text" className="pl-10" />
+            <form.Field
+              name="name"
+              children={(field) => {
+                field.state.meta.errors;
+
+                return (
+                  <Input
+                    name={field.name}
+                    value={field.state.value}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="name"
+                    type="text"
+                    className="pl-10"
+                  />
+                );
+              }}
+            />
           </div>
+
+          {/* Email */}
           <div className="group relative">
             <InputIcon>
               <TbAt size={18} />
             </InputIcon>
             <Input placeholder="email" type="email" className="pl-10" />
           </div>
+
+          {/* Password */}
           <div className="group relative">
             <InputIcon>
               <TbLockPassword size={18} />
@@ -62,7 +104,7 @@ export const SignUpForm = () => {
             <Input placeholder="password" type="password" className="px-10" />
             <InputIcon
               direction="end"
-              onClick={() => console.log("click!")}
+              onClick={() => {}}
               className="cursor-pointer"
             >
               <TbEye size={18} />
@@ -79,20 +121,20 @@ export const SignUpForm = () => {
             />
             <InputIcon
               direction="end"
-              onClick={() => console.log("click!")}
+              onClick={() => {}}
               className="cursor-pointer"
             >
               <TbEye size={18} />
             </InputIcon>
           </div>
-        </div>
-
-        <div>
-          <Button className="w-full" size={"lg"}>
-            Sign up
-          </Button>
-        </div>
+        </>
       </form>
+
+      <div>
+        <Button form="sign-up-form" className="w-full" size={"lg"}>
+          Sign up
+        </Button>
+      </div>
 
       <div className="relative flex items-center justify-center">
         <div className="my-2 h-px w-full bg-neutral-300" />

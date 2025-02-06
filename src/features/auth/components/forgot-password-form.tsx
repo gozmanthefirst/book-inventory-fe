@@ -35,22 +35,22 @@ export const ForgotPasswordForm = () => {
         </p>
       </div>
 
-      <form className="flex flex-col gap-6">
-        <div>
+      <form>
+        <>
           <div className="group relative">
             <InputIcon>
               <TbAt size={18} />
             </InputIcon>
             <Input placeholder="email" type="email" className="pl-10" />
           </div>
-        </div>
-
-        <div>
-          <Button className="w-full" size={"lg"}>
-            Request reset link
-          </Button>
-        </div>
+        </>
       </form>
+
+      <div>
+        <Button className="w-full" size={"lg"}>
+          Request reset link
+        </Button>
+      </div>
     </div>
   );
 };
