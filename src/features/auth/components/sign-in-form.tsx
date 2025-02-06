@@ -1,6 +1,7 @@
 "use client";
 
 // External Imports
+import { useForm, useStore } from "@tanstack/react-form";
 import Link from "next/link";
 import {
   TbAt,
@@ -8,6 +9,7 @@ import {
   TbEye,
   TbLockPassword,
 } from "react-icons/tb";
+import { z } from "zod";
 
 // Local Imports
 import { Button } from "@/shared/components/button";
@@ -16,7 +18,37 @@ import { InputIcon } from "@/shared/components/input-icon";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
 
+const signInSchema = z.object({
+  email: z
+    .string({ required_error: "An email is required" })
+    .trim()
+    .email({ message: "The email is invalid" }),
+  password: z
+    .string({ required_error: "A password is required" })
+    .trim()
+    .min(8, { message: "The password must have at least 8 characters" })
+    .max(32, { message: "The password can't have more than 32 characters" })
+    .refine((data) => !/\s/.test(data), {
+      message: "The password can't contain any whitespace",
+    }),
+});
+
 export const SignInForm = () => {
+  const form = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+    validators: {
+      onChange: signInSchema,
+    },
+    onSubmit: async ({ value }) => {
+      console.log(value);
+    },
+  });
+
+  const formErrors = useStore(form.store, (state) => state.errorMap);
+
   return (
     <div className="flex w-full max-w-md flex-col gap-6">
       <div className="flex flex-col gap-1">
@@ -40,29 +72,73 @@ export const SignInForm = () => {
         </p>
       </div>
 
-      <form>
+      <form
+        id="sign-in-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
         <>
-          <div className="group relative">
-            <InputIcon>
-              <TbAt size={18} />
-            </InputIcon>
-            <Input placeholder="email" type="email" className="pl-10" />
-          </div>
-          <div className="group relative">
-            <InputIcon>
-              <TbLockPassword size={18} />
-            </InputIcon>
-            <Input placeholder="password" type="password" className="px-10" />
-            <InputIcon
-              direction="end"
-              onClick={() => {}}
-              className="cursor-pointer"
-            >
-              <TbEye size={18} />
-            </InputIcon>
-          </div>
+          {/* Email */}
+          <form.Field
+            name="email"
+            children={(field) => (
+              <div className="group relative">
+                <InputIcon>
+                  <TbAt size={18} />
+                </InputIcon>
+                <Input
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  errors={field.state.meta.errors}
+                  placeholder="email"
+                  type="email"
+                  className="pl-10"
+                />
+              </div>
+            )}
+          />
+
+          {/* Password */}
+          <form.Field
+            name="password"
+            children={(field) => (
+              <div className="group relative">
+                <InputIcon>
+                  <TbLockPassword size={18} />
+                </InputIcon>
+                <Input
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  errors={field.state.meta.errors}
+                  placeholder="password"
+                  type="password"
+                  className="px-10"
+                />
+                <InputIcon
+                  direction="end"
+                  onClick={() => {}}
+                  className="cursor-pointer"
+                >
+                  <TbEye size={18} />
+                </InputIcon>
+              </div>
+            )}
+          />
         </>
       </form>
+
+      {formErrors.onChange ? (
+        <div className="-mt-4 flex items-center gap-1 text-xs text-red-600">
+          {`${(formErrors.onChange as string)?.split(", ")[0]}`}
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-3">
         <Button className="w-full" size={"lg"}>

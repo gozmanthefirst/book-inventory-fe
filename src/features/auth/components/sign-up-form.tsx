@@ -1,7 +1,7 @@
 "use client";
 
 // External Imports
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import Link from "next/link";
 import {
   TbAt,
@@ -10,6 +10,7 @@ import {
   TbLockPassword,
   TbUser,
 } from "react-icons/tb";
+import { z } from "zod";
 
 // Local Imports
 import { Button } from "@/shared/components/button";
@@ -17,6 +18,34 @@ import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
+
+const signUpSchema = z
+  .object({
+    name: z
+      .string({ required_error: "A name is required" })
+      .trim()
+      .min(3, { message: "The name must have at least 3 characters" })
+      .max(128, { message: "The name can't have more than 128 characters" }),
+    email: z
+      .string({ required_error: "An email is required" })
+      .trim()
+      .email({ message: "The email is invalid" }),
+    password: z
+      .string({ required_error: "A password is required" })
+      .trim()
+      .min(8, { message: "The password must have at least 8 characters" })
+      .max(32, { message: "The password can't have more than 32 characters" })
+      .refine((data) => !/\s/.test(data), {
+        message: "The password can't contain any whitespace",
+      }),
+    confirmPassword: z
+      .string({ required_error: "The password must be confirmed" })
+      .trim(),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "The passwords do not match",
+    path: ["confirmPassword"],
+  });
 
 export const SignUpForm = () => {
   const form = useForm({
@@ -26,10 +55,15 @@ export const SignUpForm = () => {
       password: "",
       confirmPassword: "",
     },
+    validators: {
+      onChange: signUpSchema,
+    },
     onSubmit: async ({ value }) => {
       console.log(value);
     },
   });
+
+  const formErrors = useStore(form.store, (state) => state.errorMap);
 
   return (
     <div className="flex w-full max-w-md flex-col gap-6">
@@ -64,71 +98,114 @@ export const SignUpForm = () => {
       >
         <>
           {/* Name */}
-          <div className="group relative">
-            <InputIcon>
-              <TbUser size={18} />
-            </InputIcon>
-            <form.Field
-              name="name"
-              children={(field) => {
-                field.state.meta.errors;
-
-                return (
-                  <Input
-                    name={field.name}
-                    value={field.state.value}
-                    onBlur={field.handleBlur}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    placeholder="name"
-                    type="text"
-                    className="pl-10"
-                  />
-                );
-              }}
-            />
-          </div>
+          <form.Field
+            name="name"
+            children={(field) => (
+              <div className="group relative">
+                <InputIcon>
+                  <TbUser size={18} />
+                </InputIcon>
+                <Input
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  errors={field.state.meta.errors}
+                  placeholder="name"
+                  type="text"
+                  className="pl-10"
+                />
+              </div>
+            )}
+          />
 
           {/* Email */}
-          <div className="group relative">
-            <InputIcon>
-              <TbAt size={18} />
-            </InputIcon>
-            <Input placeholder="email" type="email" className="pl-10" />
-          </div>
+          <form.Field
+            name="email"
+            children={(field) => (
+              <div className="group relative">
+                <InputIcon>
+                  <TbAt size={18} />
+                </InputIcon>
+                <Input
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  errors={field.state.meta.errors}
+                  placeholder="email"
+                  type="email"
+                  className="pl-10"
+                />
+              </div>
+            )}
+          />
 
           {/* Password */}
-          <div className="group relative">
-            <InputIcon>
-              <TbLockPassword size={18} />
-            </InputIcon>
-            <Input placeholder="password" type="password" className="px-10" />
-            <InputIcon
-              direction="end"
-              onClick={() => {}}
-              className="cursor-pointer"
-            >
-              <TbEye size={18} />
-            </InputIcon>
-          </div>
-          <div className="group relative">
-            <InputIcon>
-              <TbLockPassword size={18} />
-            </InputIcon>
-            <Input
-              placeholder="confirm password"
-              type="password"
-              className="px-10"
-            />
-            <InputIcon
-              direction="end"
-              onClick={() => {}}
-              className="cursor-pointer"
-            >
-              <TbEye size={18} />
-            </InputIcon>
-          </div>
+          <form.Field
+            name="password"
+            children={(field) => (
+              <div className="group relative">
+                <InputIcon>
+                  <TbLockPassword size={18} />
+                </InputIcon>
+                <Input
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  errors={field.state.meta.errors}
+                  placeholder="password"
+                  type="password"
+                  className="px-10"
+                />
+                <InputIcon
+                  direction="end"
+                  onClick={() => {}}
+                  className="cursor-pointer"
+                >
+                  <TbEye size={18} />
+                </InputIcon>
+              </div>
+            )}
+          />
+
+          {/* Confirm password */}
+          <form.Field
+            name="confirmPassword"
+            children={(field) => (
+              <div className="group relative">
+                <InputIcon>
+                  <TbLockPassword size={18} />
+                </InputIcon>
+                <Input
+                  name={field.name}
+                  value={field.state.value}
+                  onBlur={field.handleBlur}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  errors={formErrors.onChange ? field.state.meta.errors : []}
+                  placeholder="confirm password"
+                  type="password"
+                  className="px-10"
+                />
+                <InputIcon
+                  direction="end"
+                  onClick={() => {}}
+                  className="cursor-pointer"
+                >
+                  <TbEye size={18} />
+                </InputIcon>
+              </div>
+            )}
+          />
         </>
       </form>
+
+      {formErrors.onChange ? (
+        <div className="-mt-4 flex items-center gap-1 text-xs text-red-600">
+          {`${(formErrors.onChange as string)?.split(", ")[0]}`}
+        </div>
+      ) : null}
 
       <div>
         <Button form="sign-up-form" className="w-full" size={"lg"}>
