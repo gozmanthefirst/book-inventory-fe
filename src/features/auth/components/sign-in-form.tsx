@@ -82,9 +82,8 @@ export const SignInForm = () => {
       >
         <>
           {/* Email */}
-          <form.Field
-            name="email"
-            children={(field) => (
+          <form.Field name="email">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbAt size={18} />
@@ -101,12 +100,11 @@ export const SignInForm = () => {
                 />
               </div>
             )}
-          />
+          </form.Field>
 
           {/* Password */}
-          <form.Field
-            name="password"
-            children={(field) => (
+          <form.Field name="password">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbLockPassword size={18} />
@@ -130,7 +128,7 @@ export const SignInForm = () => {
                 </InputIcon>
               </div>
             )}
-          />
+          </form.Field>
         </>
       </form>
 

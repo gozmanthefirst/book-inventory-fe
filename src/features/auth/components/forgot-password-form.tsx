@@ -68,9 +68,8 @@ export const ForgotPasswordForm = () => {
       >
         <>
           {/* Email */}
-          <form.Field
-            name="email"
-            children={(field) => (
+          <form.Field name="email">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbAt size={18} />
@@ -87,7 +86,7 @@ export const ForgotPasswordForm = () => {
                 />
               </div>
             )}
-          />
+          </form.Field>
         </>
       </form>
 

@@ -98,9 +98,8 @@ export const SignUpForm = () => {
       >
         <>
           {/* Name */}
-          <form.Field
-            name="name"
-            children={(field) => (
+          <form.Field name="name">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbUser size={18} />
@@ -117,12 +116,11 @@ export const SignUpForm = () => {
                 />
               </div>
             )}
-          />
+          </form.Field>
 
           {/* Email */}
-          <form.Field
-            name="email"
-            children={(field) => (
+          <form.Field name="email">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbAt size={18} />
@@ -139,12 +137,11 @@ export const SignUpForm = () => {
                 />
               </div>
             )}
-          />
+          </form.Field>
 
           {/* Password */}
-          <form.Field
-            name="password"
-            children={(field) => (
+          <form.Field name="password">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbLockPassword size={18} />
@@ -168,12 +165,11 @@ export const SignUpForm = () => {
                 </InputIcon>
               </div>
             )}
-          />
+          </form.Field>
 
           {/* Confirm password */}
-          <form.Field
-            name="confirmPassword"
-            children={(field) => (
+          <form.Field name="confirmPassword">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbLockPassword size={18} />
@@ -197,7 +193,7 @@ export const SignUpForm = () => {
                 </InputIcon>
               </div>
             )}
-          />
+          </form.Field>
         </>
       </form>
 

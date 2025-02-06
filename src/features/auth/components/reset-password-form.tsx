@@ -81,9 +81,8 @@ export const ResetPasswordForm = () => {
       >
         <>
           {/* Password */}
-          <form.Field
-            name="password"
-            children={(field) => (
+          <form.Field name="password">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbLockPassword size={18} />
@@ -107,12 +106,11 @@ export const ResetPasswordForm = () => {
                 </InputIcon>
               </div>
             )}
-          />
+          </form.Field>
 
           {/* Confirm password */}
-          <form.Field
-            name="confirmPassword"
-            children={(field) => (
+          <form.Field name="confirmPassword">
+            {(field) => (
               <div className="group relative">
                 <InputIcon>
                   <TbLockPassword size={18} />
@@ -136,7 +134,7 @@ export const ResetPasswordForm = () => {
                 </InputIcon>
               </div>
             )}
-          />
+          </form.Field>
         </>
       </form>
 
