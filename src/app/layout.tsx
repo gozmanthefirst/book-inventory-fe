@@ -4,6 +4,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { ReactNode } from "react";
 
 // Local Imports
+import QueryProvider from "@/providers/query-provider";
 import { ScreenSize } from "@/shared/components/screen-size";
 import { cn } from "@/shared/lib/utils/cn";
 import { epilogue } from "@/styles/fonts";
@@ -29,7 +30,7 @@ const RootLayout = async ({ children }: Props) => {
       >
         <NuqsAdapter>
           <ScreenSize />
-          {children}
+          <QueryProvider>{children}</QueryProvider>
         </NuqsAdapter>
       </body>
     </html>
