@@ -1,18 +1,18 @@
-// Local Imports
-import { cn } from "@/shared/lib/utils/cn";
-import { alegreya } from "@/styles/fonts";
+// External Imports
+import { redirect } from "next/navigation";
 
-const HomePage = () => {
-  return (
-    <div
-      className={cn(
-        "flex flex-1 flex-col items-center justify-center text-5xl font-semibold text-brand-400",
-        alegreya.className,
-      )}
-    >
-      Home
-    </div>
-  );
+// Local Imports
+import { getUser } from "@/features/auth/actions/get-user";
+import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
+
+const HomePage = async () => {
+  const { data: user } = await runParallelAction(getUser());
+
+  if (!user) {
+    redirect("/sign-in");
+  } else {
+    redirect("/search");
+  }
 };
 
 export default HomePage;

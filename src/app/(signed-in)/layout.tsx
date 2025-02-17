@@ -3,19 +3,18 @@ import { ReactNode } from "react";
 
 // Local Imports
 import { Container } from "@/shared/components/container";
-import { LogoHeader } from "@/shared/components/logo-header";
+import { Header } from "@/shared/components/header";
 
 type Params = Promise<{ username: string }>;
 
 interface Props {
   children: ReactNode;
-  params: Params;
 }
 
-const BooksLayout = async ({ children, params }: Props) => {
+const BooksLayout = async ({ children }: Props) => {
   return (
     <Container className="flex min-h-dvh flex-col">
-      <LogoHeader />
+      <Header />
       <div className="flex flex-1 flex-col">{children}</div>
     </Container>
   );
