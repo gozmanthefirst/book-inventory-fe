@@ -17,6 +17,7 @@ import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
+import { signInWithGoogle } from "../actions/sign-in";
 
 const signInSchema = z.object({
   email: z
@@ -160,7 +161,12 @@ export const SignInForm = () => {
       </div>
 
       <div>
-        <Button className="w-full gap-2" size={"lg"} variant={"secondary"}>
+        <Button
+          onClick={async () => await signInWithGoogle()}
+          className="w-full gap-2"
+          size={"lg"}
+          variant={"secondary"}
+        >
           <TbBrandGoogleFilled size={18} />
           <span className="mt-0.5">Continue with Google</span>
         </Button>
