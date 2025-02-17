@@ -63,6 +63,8 @@ export const Search = () => {
       {/* Skeleton */}
       {isLoading ? (
         <SearchLoadingSkeleton />
+      ) : isError ? (
+        debouncedQuery && <p className="text-red-500">Something went wrong!</p>
       ) : books.length > 0 ? (
         <div className="flex w-full flex-col gap-4">
           {books.map((book) => (
