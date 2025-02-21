@@ -2,7 +2,9 @@
 
 // External Imports
 import { useForm, useStore } from "@tanstack/react-form";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
+import { useState } from "react";
 import {
   TbAt,
   TbBrandGoogleFilled,
@@ -10,9 +12,11 @@ import {
   TbLockPassword,
   TbUser,
 } from "react-icons/tb";
+import { RotatingLines } from "react-loader-spinner";
 import { z } from "zod";
 
 // Local Imports
+import { signInWithGoogle } from "@/features/auth/actions/sign-in";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
@@ -216,12 +220,72 @@ export const SignUpForm = () => {
         </div>
       </div>
 
-      <div>
-        <Button className="w-full gap-2" size={"lg"} variant={"secondary"}>
-          <TbBrandGoogleFilled size={18} />
-          <span className="mt-0.5">Continue with Google</span>
-        </Button>
-      </div>
+      <GoogleButton />
+    </div>
+  );
+};
+
+const buttonCopy = {
+  idle: (
+    <div className="flex items-center gap-2">
+      <TbBrandGoogleFilled size={18} />
+      <span className="mt-0.5">Continue with Google</span>
+    </div>
+  ),
+  loading: <RotatingLines visible width="18" strokeColor="#005cff" />,
+  success: "Signing in...",
+  error: "Something went wrong",
+};
+
+const GoogleButton = () => {
+  const [buttonState, setButtonState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  const variants = {
+    initial: { opacity: 0, y: -40 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 40 },
+  };
+
+  const handleGoogleSignIn = async () => {
+    try {
+      setButtonState("loading");
+      await signInWithGoogle();
+
+      setButtonState("success");
+    } catch (error) {
+      console.log(error);
+      setButtonState("error");
+
+      setTimeout(() => {
+        setButtonState("idle");
+      }, 3000);
+    }
+  };
+
+  return (
+    <div>
+      <Button
+        size={"lg"}
+        variant={"secondary"}
+        disabled={buttonState !== "idle"}
+        onClick={handleGoogleSignIn}
+        className="relative w-full gap-2 overflow-hidden"
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div
+            key={buttonState}
+            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+            initial="initial"
+            animate="visible"
+            exit="exit"
+            variants={variants}
+          >
+            {buttonCopy[buttonState]}
+          </motion.div>
+        </AnimatePresence>
+      </Button>
     </div>
   );
 };
