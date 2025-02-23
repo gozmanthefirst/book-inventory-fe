@@ -7,7 +7,7 @@ import { Resend } from "resend";
 import { SignUpTemplate } from "@/features/email/components/sign-up-template";
 import db from "../db/prisma";
 
-const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export const auth = betterAuth({
   // DB Adapter
