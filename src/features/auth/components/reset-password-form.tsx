@@ -102,7 +102,7 @@ export const ResetPasswordForm = () => {
     if (!token) {
       redirect("/sign-in");
     }
-  }, []);
+  }, [token]);
 
   return (
     <div className="flex w-full max-w-md flex-col gap-6">
