@@ -3,7 +3,8 @@
 // External Imports
 import { useForm, useStore } from "@tanstack/react-form";
 import Link from "next/link";
-import { TbEye, TbLockPassword } from "react-icons/tb";
+import { useState } from "react";
+import { TbEye, TbEyeOff, TbLockPassword } from "react-icons/tb";
 import { z } from "zod";
 
 // Local Imports
@@ -33,6 +34,9 @@ const resetPwdSchema = z
   });
 
 export const ResetPasswordForm = () => {
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
+
   const form = useForm({
     defaultValues: {
       password: "",
@@ -94,15 +98,15 @@ export const ResetPasswordForm = () => {
                   onChange={(e) => field.handleChange(e.target.value)}
                   errors={field.state.meta.errors}
                   placeholder="password"
-                  type="password"
+                  type={showPwd ? "text" : "password"}
                   className="px-10"
                 />
                 <InputIcon
                   direction="end"
-                  onClick={() => {}}
+                  onClick={() => setShowPwd((state) => !state)}
                   className="cursor-pointer"
                 >
-                  <TbEye size={18} />
+                  {showPwd ? <TbEyeOff size={18} /> : <TbEye size={18} />}
                 </InputIcon>
               </div>
             )}
@@ -122,15 +126,19 @@ export const ResetPasswordForm = () => {
                   onChange={(e) => field.handleChange(e.target.value)}
                   errors={formErrors.onChange ? field.state.meta.errors : []}
                   placeholder="confirm password"
-                  type="password"
+                  type={showConfirmPwd ? "text" : "password"}
                   className="px-10"
                 />
                 <InputIcon
                   direction="end"
-                  onClick={() => {}}
+                  onClick={() => setShowConfirmPwd((state) => !state)}
                   className="cursor-pointer"
                 >
-                  <TbEye size={18} />
+                  {showConfirmPwd ? (
+                    <TbEyeOff size={18} />
+                  ) : (
+                    <TbEye size={18} />
+                  )}
                 </InputIcon>
               </div>
             )}

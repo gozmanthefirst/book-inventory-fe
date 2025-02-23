@@ -1,9 +1,9 @@
 // Local Imports
-import { signOut as signout } from "@/shared/lib/auth/auth-client";
+import { authClient } from "@/shared/lib/auth/auth-client";
 
 export const signOut = async () => {
   try {
-    await signout();
+    await authClient.signOut();
     return { success: true };
   } catch (error) {
     console.log(error);

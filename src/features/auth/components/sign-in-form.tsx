@@ -9,6 +9,7 @@ import {
   TbAt,
   TbBrandGoogleFilled,
   TbEye,
+  TbEyeOff,
   TbLockPassword,
 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
@@ -18,6 +19,7 @@ import { z } from "zod";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
+import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
 import { signInWithGoogle } from "../actions/sign-in";
@@ -37,7 +39,25 @@ const signInSchema = z.object({
     }),
 });
 
+const emailButtonCopy = {
+  idle: "Sign in",
+  loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
+  success: "Sign in successful!",
+  error: "Something went wrong",
+};
+
 export const SignInForm = () => {
+  const [showPwd, setShowPwd] = useState(false);
+  const [buttonState, setButtonState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  const variants = {
+    initial: { opacity: 0, y: -40 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 40 },
+  };
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -48,6 +68,30 @@ export const SignInForm = () => {
     },
     onSubmit: async ({ value }) => {
       console.log(value);
+
+      try {
+        setButtonState("loading");
+
+        // Sign in
+        const { data, error } = await authClient.signIn.email({
+          email: value.email,
+          password: value.password,
+          callbackURL: "/search",
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        setButtonState("success");
+      } catch (error) {
+        console.error(error);
+        setButtonState("error");
+      } finally {
+        setTimeout(() => {
+          setButtonState("idle");
+        }, 3000);
+      }
     },
   });
 
@@ -120,15 +164,15 @@ export const SignInForm = () => {
                   onChange={(e) => field.handleChange(e.target.value)}
                   errors={field.state.meta.errors}
                   placeholder="password"
-                  type="password"
+                  type={showPwd ? "text" : "password"}
                   className="px-10"
                 />
                 <InputIcon
                   direction="end"
-                  onClick={() => {}}
+                  onClick={() => setShowPwd((state) => !state)}
                   className="cursor-pointer"
                 >
-                  <TbEye size={18} />
+                  {showPwd ? <TbEyeOff size={18} /> : <TbEye size={18} />}
                 </InputIcon>
               </div>
             )}
@@ -143,8 +187,24 @@ export const SignInForm = () => {
       ) : null}
 
       <div className="flex flex-col gap-3">
-        <Button className="w-full" size={"lg"}>
-          Sign in
+        <Button
+          form="sign-in-form"
+          size={"lg"}
+          disabled={buttonState !== "idle"}
+          className="relative w-full gap-2 overflow-hidden"
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={buttonState}
+              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+              initial="initial"
+              animate="visible"
+              exit="exit"
+              variants={variants}
+            >
+              {emailButtonCopy[buttonState]}
+            </motion.div>
+          </AnimatePresence>
         </Button>
 
         {/* Forgot Password */}
@@ -168,7 +228,7 @@ export const SignInForm = () => {
   );
 };
 
-const buttonCopy = {
+const googleButtonCopy = {
   idle: (
     <div className="flex items-center gap-2">
       <TbBrandGoogleFilled size={18} />
@@ -225,7 +285,7 @@ const GoogleButton = () => {
             exit="exit"
             variants={variants}
           >
-            {buttonCopy[buttonState]}
+            {googleButtonCopy[buttonState]}
           </motion.div>
         </AnimatePresence>
       </Button>

@@ -9,6 +9,7 @@ import {
   TbAt,
   TbBrandGoogleFilled,
   TbEye,
+  TbEyeOff,
   TbLockPassword,
   TbUser,
 } from "react-icons/tb";
@@ -20,6 +21,7 @@ import { signInWithGoogle } from "@/features/auth/actions/sign-in";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
+import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
 
@@ -51,7 +53,26 @@ const signUpSchema = z
     path: ["confirmPassword"],
   });
 
+const emailButtonCopy = {
+  idle: "Sign up",
+  loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
+  success: "Verification email sent!",
+  error: "Something went wrong",
+};
+
 export const SignUpForm = () => {
+  const [showPwd, setShowPwd] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
+  const [buttonState, setButtonState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  const variants = {
+    initial: { opacity: 0, y: -40 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 40 },
+  };
+
   const form = useForm({
     defaultValues: {
       name: "",
@@ -63,7 +84,30 @@ export const SignUpForm = () => {
       onChange: signUpSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      try {
+        setButtonState("loading");
+
+        // Sign up
+        const { data, error } = await authClient.signUp.email({
+          name: value.name,
+          email: value.email,
+          password: value.password,
+          callbackURL: "/search",
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        setButtonState("success");
+      } catch (error) {
+        console.error(error);
+        setButtonState("error");
+      } finally {
+        setTimeout(() => {
+          setButtonState("idle");
+        }, 3000);
+      }
     },
   });
 
@@ -157,15 +201,15 @@ export const SignUpForm = () => {
                   onChange={(e) => field.handleChange(e.target.value)}
                   errors={field.state.meta.errors}
                   placeholder="password"
-                  type="password"
+                  type={showPwd ? "text" : "password"}
                   className="px-10"
                 />
                 <InputIcon
                   direction="end"
-                  onClick={() => {}}
+                  onClick={() => setShowPwd((state) => !state)}
                   className="cursor-pointer"
                 >
-                  <TbEye size={18} />
+                  {showPwd ? <TbEyeOff size={18} /> : <TbEye size={18} />}
                 </InputIcon>
               </div>
             )}
@@ -183,17 +227,21 @@ export const SignUpForm = () => {
                   value={field.state.value}
                   onBlur={field.handleBlur}
                   onChange={(e) => field.handleChange(e.target.value)}
-                  errors={formErrors.onChange ? field.state.meta.errors : []}
+                  errors={field.state.meta.errors}
                   placeholder="confirm password"
-                  type="password"
+                  type={showConfirmPwd ? "text" : "password"}
                   className="px-10"
                 />
                 <InputIcon
                   direction="end"
-                  onClick={() => {}}
+                  onClick={() => setShowConfirmPwd((state) => !state)}
                   className="cursor-pointer"
                 >
-                  <TbEye size={18} />
+                  {showConfirmPwd ? (
+                    <TbEyeOff size={18} />
+                  ) : (
+                    <TbEye size={18} />
+                  )}
                 </InputIcon>
               </div>
             )}
@@ -208,8 +256,24 @@ export const SignUpForm = () => {
       ) : null}
 
       <div>
-        <Button form="sign-up-form" className="w-full" size={"lg"}>
-          Sign up
+        <Button
+          form="sign-up-form"
+          size={"lg"}
+          disabled={buttonState !== "idle"}
+          className="relative w-full gap-2 overflow-hidden"
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={buttonState}
+              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+              initial="initial"
+              animate="visible"
+              exit="exit"
+              variants={variants}
+            >
+              {emailButtonCopy[buttonState]}
+            </motion.div>
+          </AnimatePresence>
         </Button>
       </div>
 
@@ -225,7 +289,7 @@ export const SignUpForm = () => {
   );
 };
 
-const buttonCopy = {
+const googleButtonCopy = {
   idle: (
     <div className="flex items-center gap-2">
       <TbBrandGoogleFilled size={18} />
@@ -233,7 +297,7 @@ const buttonCopy = {
     </div>
   ),
   loading: <RotatingLines visible width="18" strokeColor="#005cff" />,
-  success: "Signing in...",
+  success: "Signing up...",
   error: "Something went wrong",
 };
 
@@ -282,7 +346,7 @@ const GoogleButton = () => {
             exit="exit"
             variants={variants}
           >
-            {buttonCopy[buttonState]}
+            {googleButtonCopy[buttonState]}
           </motion.div>
         </AnimatePresence>
       </Button>

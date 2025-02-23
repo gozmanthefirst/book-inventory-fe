@@ -1,9 +1,13 @@
 // External Imports
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
+import { Resend } from "resend";
 
 // Local Imports
+import { SignUpTemplate } from "@/features/email/components/sign-up-template";
 import db from "../db/prisma";
+
+const resend = new Resend(process.env.NEXT_PUBLIC_RESEND_API_KEY);
 
 export const auth = betterAuth({
   // DB Adapter
@@ -11,10 +15,35 @@ export const auth = betterAuth({
     provider: "postgresql",
   }),
 
-  // Auth Methods
+  // Account
+  account: {
+    accountLinking: {
+      enabled: true,
+      trustedProviders: ["google", "email-password"],
+    },
+  },
+
+  // Email and Password
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
   },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url, token }, request) => {
+      const { data, error } = await resend.emails.send({
+        from: "Book Inventory <books@gozman.dev>",
+        to: [user.email],
+        subject: "Sign up to Book Inventory",
+        react: SignUpTemplate({ url }),
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
+  },
+
+  // Google OAuth
   socialProviders: {
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID as string,

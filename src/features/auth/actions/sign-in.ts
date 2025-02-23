@@ -1,8 +1,8 @@
 // Local Imports
-import { signIn } from "@/shared/lib/auth/auth-client";
+import { authClient } from "@/shared/lib/auth/auth-client";
 
 export const signInWithGoogle = async () => {
-  await signIn.social({
+  await authClient.signIn.social({
     provider: "google",
   });
 };
