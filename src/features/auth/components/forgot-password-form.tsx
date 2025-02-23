@@ -3,6 +3,7 @@
 // External Imports
 import { useForm, useStore } from "@tanstack/react-form";
 import Link from "next/link";
+import { useState } from "react";
 import { TbAt } from "react-icons/tb";
 import { z } from "zod";
 
@@ -10,8 +11,11 @@ import { z } from "zod";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
+import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
+import { AnimatePresence, motion } from "motion/react";
+import { RotatingLines } from "react-loader-spinner";
 
 const forgotPwdSchema = z.object({
   email: z
@@ -20,7 +24,24 @@ const forgotPwdSchema = z.object({
     .email({ message: "The email is invalid" }),
 });
 
+const buttonCopy = {
+  idle: "Request reset link email",
+  loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
+  success: "Reset link email sent!",
+  error: "Something went wrong",
+};
+
 export const ForgotPasswordForm = () => {
+  const [buttonState, setButtonState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  const variants = {
+    initial: { opacity: 0, y: -40 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 40 },
+  };
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -29,7 +50,28 @@ export const ForgotPasswordForm = () => {
       onChange: forgotPwdSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      try {
+        setButtonState("loading");
+
+        // Get reset password
+        const { data, error } = await authClient.forgetPassword({
+          email: value.email,
+          redirectTo: "/reset-password",
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        setButtonState("success");
+      } catch (error) {
+        console.error(error);
+        setButtonState("error");
+      } finally {
+        setTimeout(() => {
+          setButtonState("idle");
+        }, 3000);
+      }
     },
   });
 
@@ -97,8 +139,24 @@ export const ForgotPasswordForm = () => {
       ) : null}
 
       <div>
-        <Button className="w-full" size={"lg"}>
-          Request reset link
+        <Button
+          form="forgot-pwd-form"
+          size={"lg"}
+          disabled={buttonState !== "idle"}
+          className="relative w-full gap-2 overflow-hidden"
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={buttonState}
+              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+              initial="initial"
+              animate="visible"
+              exit="exit"
+              variants={variants}
+            >
+              {buttonCopy[buttonState]}
+            </motion.div>
+          </AnimatePresence>
         </Button>
       </div>
     </div>

@@ -3,7 +3,7 @@
 // External Imports
 import { useForm, useStore } from "@tanstack/react-form";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { TbEye, TbEyeOff, TbLockPassword } from "react-icons/tb";
 import { z } from "zod";
 
@@ -11,8 +11,13 @@ import { z } from "zod";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
+import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
+import { AnimatePresence, motion } from "motion/react";
+import { redirect } from "next/navigation";
+import { useQueryState } from "nuqs";
+import { RotatingLines } from "react-loader-spinner";
 
 const resetPwdSchema = z
   .object({
@@ -33,9 +38,27 @@ const resetPwdSchema = z
     path: ["confirmPassword"],
   });
 
+const buttonCopy = {
+  idle: "Reset password",
+  loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
+  success: "Password reset successful!",
+  error: "Something went wrong",
+};
+
 export const ResetPasswordForm = () => {
+  const [token, setToken] = useQueryState("token");
+
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
+  const [buttonState, setButtonState] = useState<
+    "idle" | "loading" | "success" | "error"
+  >("idle");
+
+  const variants = {
+    initial: { opacity: 0, y: -40 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 40 },
+  };
 
   const form = useForm({
     defaultValues: {
@@ -46,11 +69,40 @@ export const ResetPasswordForm = () => {
       onChange: resetPwdSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      try {
+        if (!token) return;
+
+        setButtonState("loading");
+
+        // Reset password
+        const { data, error } = await authClient.resetPassword({
+          newPassword: value.password,
+          token,
+        });
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+        setButtonState("success");
+      } catch (error) {
+        console.error(error);
+        setButtonState("error");
+      } finally {
+        setTimeout(() => {
+          setButtonState("idle");
+        }, 3000);
+      }
     },
   });
 
   const formErrors = useStore(form.store, (state) => state.errorMap);
+
+  useEffect(() => {
+    if (!token) {
+      redirect("/sign-in");
+    }
+  }, []);
 
   return (
     <div className="flex w-full max-w-md flex-col gap-6">
@@ -153,8 +205,24 @@ export const ResetPasswordForm = () => {
       ) : null}
 
       <div>
-        <Button className="w-full" size={"lg"}>
-          Reset password
+        <Button
+          form="reset-pwd-form"
+          size={"lg"}
+          disabled={buttonState !== "idle"}
+          className="relative w-full gap-2 overflow-hidden"
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={buttonState}
+              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+              initial="initial"
+              animate="visible"
+              exit="exit"
+              variants={variants}
+            >
+              {buttonCopy[buttonState]}
+            </motion.div>
+          </AnimatePresence>
         </Button>
       </div>
     </div>

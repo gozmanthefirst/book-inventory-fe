@@ -4,6 +4,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Resend } from "resend";
 
 // Local Imports
+import { ResetPasswordTemplate } from "@/features/email/components/reset-password-template";
 import { SignUpTemplate } from "@/features/email/components/sign-up-template";
 import db from "../db/prisma";
 
@@ -27,8 +28,21 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
+    sendResetPassword: async ({ user, url, token }, request) => {
+      const { data, error } = await resend.emails.send({
+        from: "Book Inventory <books@gozman.dev>",
+        to: [user.email],
+        subject: "Reset your password in Book Inventory",
+        react: ResetPasswordTemplate({ url }),
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
   },
   emailVerification: {
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url, token }, request) => {
       const { data, error } = await resend.emails.send({
         from: "Book Inventory <books@gozman.dev>",
