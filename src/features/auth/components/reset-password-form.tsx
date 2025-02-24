@@ -2,9 +2,13 @@
 
 // External Imports
 import { useForm, useStore } from "@tanstack/react-form";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
 import { TbEye, TbEyeOff, TbLockPassword } from "react-icons/tb";
+import { RotatingLines } from "react-loader-spinner";
 import { z } from "zod";
 
 // Local Imports
@@ -14,10 +18,6 @@ import { InputIcon } from "@/shared/components/input-icon";
 import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
-import { AnimatePresence, motion } from "motion/react";
-import { redirect } from "next/navigation";
-import { useQueryState } from "nuqs";
-import { RotatingLines } from "react-loader-spinner";
 
 const resetPwdSchema = z
   .object({
@@ -72,19 +72,28 @@ export const ResetPasswordForm = () => {
       try {
         if (!token) return;
 
-        setButtonState("loading");
+        await authClient.resetPassword(
+          {
+            newPassword: value.password,
+            token,
+          },
+          {
+            onRequest() {
+              setButtonState("loading");
+            },
+            onError(ctx) {
+              if (process.env.NODE_ENV !== "production") {
+                console.error(ctx.error);
+              }
 
-        // Reset password
-        const { data, error } = await authClient.resetPassword({
-          newPassword: value.password,
-          token,
-        });
-
-        if (error) {
-          throw new Error(error.message);
-        }
-
-        setButtonState("success");
+              setButtonState("error");
+            },
+            onSuccess() {
+              setButtonState("success");
+              redirect("/sign-in");
+            },
+          },
+        );
       } catch (error) {
         console.error(error);
         setButtonState("error");
@@ -208,6 +217,7 @@ export const ResetPasswordForm = () => {
         <Button
           form="reset-pwd-form"
           size={"lg"}
+          variant={buttonState === "error" ? "destructive" : "brand"}
           disabled={buttonState !== "idle"}
           className="relative w-full gap-2 overflow-hidden"
         >

@@ -2,9 +2,11 @@
 
 // External Imports
 import { useForm, useStore } from "@tanstack/react-form";
+import { AnimatePresence, motion } from "motion/react";
 import Link from "next/link";
 import { useState } from "react";
 import { TbAt } from "react-icons/tb";
+import { RotatingLines } from "react-loader-spinner";
 import { z } from "zod";
 
 // Local Imports
@@ -14,8 +16,6 @@ import { InputIcon } from "@/shared/components/input-icon";
 import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
-import { AnimatePresence, motion } from "motion/react";
-import { RotatingLines } from "react-loader-spinner";
 
 const forgotPwdSchema = z.object({
   email: z
@@ -51,21 +51,32 @@ export const ForgotPasswordForm = () => {
     },
     onSubmit: async ({ value }) => {
       try {
-        setButtonState("loading");
+        await authClient.forgetPassword(
+          {
+            email: value.email,
+            redirectTo: "/reset-password",
+          },
+          {
+            onRequest() {
+              setButtonState("loading");
+            },
+            onError(ctx) {
+              if (process.env.NODE_ENV !== "production") {
+                console.error(ctx.error);
+              }
 
-        // Get reset password
-        const { data, error } = await authClient.forgetPassword({
-          email: value.email,
-          redirectTo: "/reset-password",
-        });
-
-        if (error) {
-          throw new Error(error.message);
+              setButtonState("error");
+            },
+            onSuccess() {
+              setButtonState("success");
+            },
+          },
+        );
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
         }
 
-        setButtonState("success");
-      } catch (error) {
-        console.error(error);
         setButtonState("error");
       } finally {
         setTimeout(() => {
@@ -142,6 +153,7 @@ export const ForgotPasswordForm = () => {
         <Button
           form="forgot-pwd-form"
           size={"lg"}
+          variant={buttonState === "error" ? "destructive" : "brand"}
           disabled={buttonState !== "idle"}
           className="relative w-full gap-2 overflow-hidden"
         >

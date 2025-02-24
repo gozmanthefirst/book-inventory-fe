@@ -22,7 +22,6 @@ import { InputIcon } from "@/shared/components/input-icon";
 import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "@/shared/lib/utils/cn";
 import { alegreya } from "@/styles/fonts";
-import { signInWithGoogle } from "../actions/sign-in";
 
 const signInSchema = z.object({
   email: z
@@ -44,12 +43,19 @@ const emailButtonCopy = {
   loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
   success: "Sign in successful!",
   error: "Something went wrong",
+  verifyEmail: "Verify your email",
+  invalidCredentials: "Invalid email or password",
 };
 
 export const SignInForm = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [buttonState, setButtonState] = useState<
-    "idle" | "loading" | "success" | "error"
+    | "idle"
+    | "loading"
+    | "success"
+    | "error"
+    | "verifyEmail"
+    | "invalidCredentials"
   >("idle");
 
   const variants = {
@@ -67,25 +73,40 @@ export const SignInForm = () => {
       onChange: signInSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
-
       try {
-        setButtonState("loading");
+        await authClient.signIn.email(
+          {
+            email: value.email,
+            password: value.password,
+            callbackURL: "/search",
+          },
+          {
+            onRequest() {
+              setButtonState("loading");
+            },
+            onError(ctx) {
+              if (process.env.NODE_ENV !== "production") {
+                console.error(ctx.error);
+              }
 
-        // Sign in
-        const { data, error } = await authClient.signIn.email({
-          email: value.email,
-          password: value.password,
-          callbackURL: "/search",
-        });
-
-        if (error) {
-          throw new Error(error.message);
+              if (ctx.error.status === 403) {
+                setButtonState("verifyEmail");
+              } else if (ctx.error.status === 401) {
+                setButtonState("invalidCredentials");
+              } else {
+                setButtonState("error");
+              }
+            },
+            onSuccess() {
+              setButtonState("success");
+            },
+          },
+        );
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
         }
 
-        setButtonState("success");
-      } catch (error) {
-        console.error(error);
         setButtonState("error");
       } finally {
         setTimeout(() => {
@@ -190,6 +211,13 @@ export const SignInForm = () => {
         <Button
           form="sign-in-form"
           size={"lg"}
+          variant={
+            buttonState === "error" ||
+            buttonState === "verifyEmail" ||
+            buttonState === "invalidCredentials"
+              ? "destructive"
+              : "brand"
+          }
           disabled={buttonState !== "idle"}
           className="relative w-full gap-2 overflow-hidden"
         >
@@ -210,7 +238,7 @@ export const SignInForm = () => {
         {/* Forgot Password */}
         <Link
           href={"/forgot-password"}
-          className="text-xs text-brand-400 lg:hover:underline lg:hover:underline-offset-2"
+          className="self-start text-xs text-brand-400 lg:hover:underline lg:hover:underline-offset-2"
         >
           Forgot your password?
         </Link>
@@ -253,14 +281,33 @@ const GoogleButton = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      setButtonState("loading");
-      await signInWithGoogle();
+      await authClient.signIn.social(
+        {
+          provider: "google",
+        },
+        {
+          onRequest() {
+            setButtonState("loading");
+          },
+          onError(ctx) {
+            if (process.env.NODE_ENV !== "production") {
+              console.error(ctx.error);
+            }
 
-      setButtonState("success");
+            setButtonState("error");
+          },
+          onSuccess() {
+            setButtonState("success");
+          },
+        },
+      );
     } catch (error) {
-      console.log(error);
-      setButtonState("error");
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
 
+      setButtonState("error");
+    } finally {
       setTimeout(() => {
         setButtonState("idle");
       }, 3000);

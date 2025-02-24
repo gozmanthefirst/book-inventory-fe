@@ -17,7 +17,6 @@ import { RotatingLines } from "react-loader-spinner";
 import { z } from "zod";
 
 // Local Imports
-import { signInWithGoogle } from "@/features/auth/actions/sign-in";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
@@ -58,13 +57,14 @@ const emailButtonCopy = {
   loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
   success: "Verification email sent!",
   error: "Something went wrong",
+  userExists: "This email has been used",
 };
 
 export const SignUpForm = () => {
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [buttonState, setButtonState] = useState<
-    "idle" | "loading" | "success" | "error"
+    "idle" | "loading" | "success" | "error" | "userExists"
   >("idle");
 
   const variants = {
@@ -85,23 +85,38 @@ export const SignUpForm = () => {
     },
     onSubmit: async ({ value }) => {
       try {
-        setButtonState("loading");
+        await authClient.signUp.email(
+          {
+            name: value.name,
+            email: value.email,
+            password: value.password,
+            callbackURL: "/search",
+          },
+          {
+            onRequest() {
+              setButtonState("loading");
+            },
+            onError(ctx) {
+              if (process.env.NODE_ENV !== "production") {
+                console.error(ctx.error);
+              }
 
-        // Sign up
-        const { data, error } = await authClient.signUp.email({
-          name: value.name,
-          email: value.email,
-          password: value.password,
-          callbackURL: "/search",
-        });
-
-        if (error) {
-          throw new Error(error.message);
+              if (ctx.error.status === 422) {
+                setButtonState("userExists");
+              } else {
+                setButtonState("error");
+              }
+            },
+            onSuccess() {
+              setButtonState("success");
+            },
+          },
+        );
+      } catch (error) {
+        if (process.env.NODE_ENV !== "production") {
+          console.error(error);
         }
 
-        setButtonState("success");
-      } catch (error) {
-        console.error(error);
         setButtonState("error");
       } finally {
         setTimeout(() => {
@@ -259,6 +274,11 @@ export const SignUpForm = () => {
         <Button
           form="sign-up-form"
           size={"lg"}
+          variant={
+            buttonState === "error" || buttonState === "userExists"
+              ? "destructive"
+              : "brand"
+          }
           disabled={buttonState !== "idle"}
           className="relative w-full gap-2 overflow-hidden"
         >
@@ -314,14 +334,33 @@ const GoogleButton = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      setButtonState("loading");
-      await signInWithGoogle();
+      await authClient.signIn.social(
+        {
+          provider: "google",
+        },
+        {
+          onRequest() {
+            setButtonState("loading");
+          },
+          onError(ctx) {
+            if (process.env.NODE_ENV !== "production") {
+              console.error(ctx.error);
+            }
 
-      setButtonState("success");
+            setButtonState("error");
+          },
+          onSuccess() {
+            setButtonState("success");
+          },
+        },
+      );
     } catch (error) {
-      console.log(error);
-      setButtonState("error");
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
 
+      setButtonState("error");
+    } finally {
       setTimeout(() => {
         setButtonState("idle");
       }, 3000);

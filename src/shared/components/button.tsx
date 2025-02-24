@@ -7,12 +7,14 @@ import { ButtonHTMLAttributes, forwardRef } from "react";
 import { cn } from "../lib/utils/cn";
 
 export const buttonVariants = cva(
-  "inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold cursor-pointer transition-colors duration-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-70",
+  "inline-flex gap-2 items-center justify-center whitespace-nowrap rounded-xl text-sm font-semibold cursor-pointer transition duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 disabled:pointer-events-none disabled:opacity-70",
   {
     variants: {
       variant: {
         brand:
           "bg-brand-400 text-background shadow-sm lg:hover:bg-brand-300 focus-visible:outline-brand-400",
+        destructive:
+          "bg-red-600 text-background shadow-sm lg:hover:bg-red-500 focus-visible:outline-red-600",
         white:
           "bg-white text-black shadow-sm lg:hover:bg-white/90 focus-visible:outline-white",
         black:

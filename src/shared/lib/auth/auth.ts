@@ -32,7 +32,7 @@ export const auth = betterAuth({
       const { data, error } = await resend.emails.send({
         from: "Book Inventory <books@gozman.dev>",
         to: [user.email],
-        subject: "Reset your password in Book Inventory",
+        subject: "Reset your password",
         react: ResetPasswordTemplate({ url }),
       });
 

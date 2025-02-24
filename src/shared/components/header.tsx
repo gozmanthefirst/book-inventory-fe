@@ -4,11 +4,12 @@
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { HTMLAttributes, Ref, useState } from "react";
+import { RotatingLines } from "react-loader-spinner";
 
 // Local Imports
-import { signOut } from "@/features/auth/actions/sign-out";
-import { RotatingLines } from "react-loader-spinner";
+import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "../lib/utils/cn";
 import { Button } from "./button";
 
@@ -24,7 +25,9 @@ const buttonCopy = {
 };
 
 export const Header = ({ className, ref, ...props }: HeaderProps) => {
-  const [signOutBtnState, setSignOutBtnState] = useState<
+  const router = useRouter();
+
+  const [buttonState, setButtonState] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
 
@@ -36,22 +39,33 @@ export const Header = ({ className, ref, ...props }: HeaderProps) => {
 
   const handleSignOut = async () => {
     try {
-      setSignOutBtnState("loading");
-      const response = await signOut();
+      await authClient.signOut({
+        fetchOptions: {
+          onRequest() {
+            setButtonState("loading");
+          },
+          onError(ctx) {
+            if (process.env.NODE_ENV !== "production") {
+              console.error(ctx.error);
+            }
 
-      if (response.success) {
-        setSignOutBtnState("success");
-
-        setTimeout(() => {
-          window.location.href = "/sign-in";
-        }, 2000);
-      }
+            setButtonState("error");
+          },
+          onSuccess() {
+            setButtonState("success");
+            router.push("/sign-in");
+          },
+        },
+      });
     } catch (error) {
-      console.log(error);
-      setSignOutBtnState("error");
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
 
+      setButtonState("error");
+    } finally {
       setTimeout(() => {
-        setSignOutBtnState("idle");
+        setButtonState("idle");
       }, 3000);
     }
   };
@@ -74,20 +88,20 @@ export const Header = ({ className, ref, ...props }: HeaderProps) => {
       <div>
         <Button
           size={"sm"}
-          disabled={signOutBtnState !== "idle"}
+          disabled={buttonState !== "idle"}
           onClick={handleSignOut}
           className={cn("relative w-30 overflow-hidden")}
         >
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
-              key={signOutBtnState}
+              key={buttonState}
               transition={{ type: "spring", bounce: 0, duration: 0.3 }}
               initial="initial"
               animate="visible"
               exit="exit"
               variants={variants}
             >
-              {buttonCopy[signOutBtnState]}
+              {buttonCopy[buttonState]}
             </motion.div>
           </AnimatePresence>
         </Button>
