@@ -74,18 +74,18 @@ export const Header = ({ className, ref, ...props }: HeaderProps) => {
     <header
       ref={ref}
       className={cn(
-        "sticky top-0 z-50 flex items-center justify-between py-6",
+        "pointer-events-none sticky top-0 z-50 flex items-center justify-between py-6",
         className,
       )}
       {...props}
     >
-      <Link href={"/"}>
+      <Link href={"/"} className="pointer-events-auto">
         <div className="relative size-10 md:size-11">
           <Image src={"/images/logo.png"} alt="Logo" fill />
         </div>
       </Link>
 
-      <div>
+      <div className="pointer-events-auto">
         <Button
           size={"sm"}
           disabled={buttonState !== "idle"}

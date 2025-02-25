@@ -20,10 +20,12 @@ const BooksLayout = async ({ children }: Props) => {
   }
 
   return (
-    <Container className="flex min-h-dvh flex-col">
-      <Header />
-      <div className="flex flex-1 flex-col">{children}</div>
-    </Container>
+    <>
+      <Container className="flex min-h-dvh flex-col">
+        <Header />
+        <div className="flex-1">{children}</div>
+      </Container>
+    </>
   );
 };
 
