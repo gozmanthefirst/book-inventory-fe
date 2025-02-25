@@ -158,7 +158,7 @@ const SingleBook = ({
               bounce: 0.2,
             }}
             className={cn(
-              "line-clamp-2 text-lg leading-tight font-semibold text-neutral-800 transition-colors duration-200 group-hover:text-brand-400 sm:text-xl md:text-2xl",
+              "line-clamp-2 text-xl leading-tight font-semibold text-neutral-800 transition-colors duration-200 group-hover:text-brand-400 md:text-2xl",
               alegreya.className,
             )}
           >
@@ -261,7 +261,8 @@ const SelectedBook = ({
                 bounce: 0.2,
               }}
               style={{ borderRadius: 0 }}
-              className="group flex w-full max-w-4xl cursor-pointer flex-col gap-4 border-neutral-300 bg-background p-4 shadow-md md:p-6"
+              onClick={() => console.log(book.image)}
+              className="group flex w-full max-w-4xl flex-col gap-4 border-neutral-300 bg-background p-4 shadow-md md:p-6"
             >
               <div className="flex w-full flex-col gap-4 smd:gap-4 md:h-80 md:flex-row">
                 {/* Book image */}
@@ -274,7 +275,7 @@ const SelectedBook = ({
                   }}
                   className="relative z-65 aspect-2/3 h-75 self-start shadow-md sm:h-84 smd:h-96 md:h-full"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 text-neutral-400">
+                  <div className="absolute inset-0 z-65 flex items-center justify-center bg-black/10 text-neutral-400">
                     <MotionTbBook2
                       layoutId={`book-icon-${book.id}`}
                       transition={{
@@ -307,7 +308,7 @@ const SelectedBook = ({
                         bounce: 0.2,
                       }}
                       className={cn(
-                        "text-xl leading-tight font-semibold text-brand-400 transition-colors duration-200 sm:text-xl md:text-2xl",
+                        "text-xl leading-tight font-semibold text-brand-400 transition-colors duration-200 md:text-2xl",
                         alegreya.className,
                       )}
                     >
@@ -329,17 +330,19 @@ const SelectedBook = ({
                   </div>
 
                   {/* Description */}
-                  <motion.p
-                    layoutId={`book-desc-${book.id}`}
-                    transition={{
-                      type: "spring",
-                      duration: 0.5,
-                      bounce: 0.2,
-                    }}
-                    className="mt-2 h-64 overflow-auto text-[13px]/[18px] text-neutral-600 smd:mt-2 md:text-sm"
-                  >
-                    {book?.description}
-                  </motion.p>
+                  {book?.description ? (
+                    <motion.p
+                      layoutId={`book-desc-${book.id}`}
+                      transition={{
+                        type: "spring",
+                        duration: 0.5,
+                        bounce: 0.2,
+                      }}
+                      className="mt-2 max-h-[30dvh] overflow-auto text-[13px]/[18px] text-neutral-600 smd:mt-2 md:text-sm"
+                    >
+                      {book?.description}
+                    </motion.p>
+                  ) : null}
                 </div>
               </div>
             </motion.div>
