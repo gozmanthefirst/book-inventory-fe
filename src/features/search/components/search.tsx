@@ -219,7 +219,7 @@ const SelectedBook = ({
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
+  }, [setSelectedBook]);
 
   // Stop page from scrolling when the modal is open
   useEffect(() => {
