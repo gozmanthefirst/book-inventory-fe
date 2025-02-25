@@ -16,6 +16,7 @@ import { TbBook2, TbSearch } from "react-icons/tb";
 
 // Local Imports
 import { searchBook } from "@/features/search/actions/search-book";
+import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
 import { Skeleton } from "@/shared/components/skeleton";
@@ -173,7 +174,7 @@ const SingleBook = ({
               duration: 0.5,
               bounce: 0.2,
             }}
-            className="text-[13px]/[18px] font-semibold text-neutral-600 md:text-sm"
+            className="line-clamp-2 text-[13px]/[18px] font-semibold text-neutral-600 md:text-sm"
           >
             {book.authors?.join(", ")}
           </motion.p>
@@ -262,7 +263,7 @@ const SelectedBook = ({
               }}
               style={{ borderRadius: 0 }}
               onClick={() => console.log(book.image)}
-              className="group flex w-full max-w-4xl flex-col gap-4 border-neutral-300 bg-background p-4 shadow-md md:p-6"
+              className="group relative flex max-h-[95dvh] w-full max-w-4xl flex-col gap-4 overflow-auto border-neutral-300 bg-background p-4 shadow-md md:p-6"
             >
               <div className="flex w-full flex-col gap-4 smd:gap-4 md:h-80 md:flex-row">
                 {/* Book image */}
@@ -273,9 +274,9 @@ const SelectedBook = ({
                     duration: 0.5,
                     bounce: 0.2,
                   }}
-                  className="relative z-65 aspect-2/3 h-75 self-start shadow-md sm:h-84 smd:h-96 md:h-full"
+                  className="relative z-65 aspect-2/3 h-60 self-start shadow-md sm:h-70 smd:h-88 md:h-full"
                 >
-                  <div className="absolute inset-0 z-65 flex items-center justify-center bg-black/10 text-neutral-400">
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 text-neutral-400">
                     <MotionTbBook2
                       layoutId={`book-icon-${book.id}`}
                       transition={{
@@ -323,7 +324,7 @@ const SelectedBook = ({
                         duration: 0.5,
                         bounce: 0.2,
                       }}
-                      className="text-[13px]/[18px] font-semibold text-neutral-600 md:text-sm"
+                      className="max-h-[8dvh] overflow-auto text-[13px]/[18px] font-semibold text-neutral-600 md:text-sm"
                     >
                       {book.authors?.join(", ")}
                     </motion.p>
@@ -338,12 +339,81 @@ const SelectedBook = ({
                         duration: 0.5,
                         bounce: 0.2,
                       }}
-                      className="mt-2 max-h-[30dvh] overflow-auto text-[13px]/[18px] text-neutral-600 smd:mt-2 md:text-sm"
+                      className="mt-2 max-h-[15dvh] overflow-auto text-[13px]/[18px] text-neutral-600 sm:max-h-[20dvh] smd:mt-2 smd:max-h-[25dvh] md:max-h-auto md:text-sm"
                     >
                       {book?.description}
                     </motion.p>
                   ) : null}
                 </div>
+              </div>
+
+              {/* Buttons */}
+              <div className="sticky bottom-0 bg-background">
+                {/* Small */}
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    y: -30,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -30,
+                  }}
+                  transition={{ duration: 0.1 }}
+                  className="flex flex-col-reverse gap-3 smd:flex-row md:hidden"
+                >
+                  <Button
+                    size={"lg"}
+                    variant={"secondary"}
+                    onClick={() => setSelectedBook(null)}
+                    className="relative w-full gap-2 overflow-hidden"
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    size={"lg"}
+                    className="relative w-full gap-2 overflow-hidden"
+                  >
+                    Add
+                  </Button>
+                </motion.div>
+
+                {/* Large */}
+                <motion.div
+                  initial={{
+                    opacity: 0,
+                    y: -30,
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -30,
+                  }}
+                  transition={{ duration: 0.1 }}
+                  className="hidden flex-col-reverse gap-3 smd:flex-row md:flex"
+                >
+                  <Button
+                    size={"xl"}
+                    variant={"secondary"}
+                    onClick={() => setSelectedBook(null)}
+                    className="relative w-full gap-2 overflow-hidden"
+                  >
+                    Close
+                  </Button>
+                  <Button
+                    size={"xl"}
+                    className="relative w-full gap-2 overflow-hidden"
+                  >
+                    Add
+                  </Button>
+                </motion.div>
               </div>
             </motion.div>
           </div>
