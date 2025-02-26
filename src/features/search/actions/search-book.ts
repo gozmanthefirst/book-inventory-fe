@@ -5,12 +5,12 @@ import axios from "axios";
 
 // Local Imports
 import { createParallelAction } from "@/shared/lib/utils/parallel-server-action";
-import { GoogleBookResponse, SearchedBook } from "@/shared/types/google-book";
+import { GoogleBookResponse, SimpleBook } from "@/shared/types/google-book";
 
 const API_BASE = "https://www.googleapis.com/books/v1/volumes";
 
 export const searchBook = createParallelAction(
-  async (query: string): Promise<SearchedBook[]> => {
+  async (query: string): Promise<SimpleBook[]> => {
     try {
       const response = await axios.get<GoogleBookResponse>(API_BASE, {
         params: {
@@ -21,7 +21,7 @@ export const searchBook = createParallelAction(
         },
       });
 
-      const formattedResult: SearchedBook[] = (response.data.items || []).map(
+      const formattedResult: SimpleBook[] = (response.data.items || []).map(
         (book) => {
           const formattedBook = {
             id: book.id,

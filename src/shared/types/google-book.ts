@@ -19,7 +19,7 @@ export type GoogleBookVolume = {
   };
 };
 
-export type SearchedBook = {
+export type SimpleBook = {
   id: string;
   title: string;
   subtitle?: string;
