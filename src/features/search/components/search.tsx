@@ -1,37 +1,29 @@
 "use client";
 
 // External Imports
-// import { useClickAway } from "@uidotdev/usehooks";
 import { useQuery } from "@tanstack/react-query";
-import {
-  useClickAway,
-  useDebounce,
-  useLockBodyScroll,
-} from "@uidotdev/usehooks";
-import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
+import { useDebounce } from "@uidotdev/usehooks";
 import { useQueryState } from "nuqs";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { TbBook2, TbSearch } from "react-icons/tb";
+import { useState } from "react";
+import { TbSearch } from "react-icons/tb";
 
 // Local Imports
+import { BookListLoader } from "@/features/book/components/book-list-loader";
+import { BookModal } from "@/features/book/components/book-modal";
+import { SingleBook } from "@/features/book/components/single-book";
 import { searchBook } from "@/features/search/actions/search-book";
-import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
-import { Skeleton } from "@/shared/components/skeleton";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
-import { SearchedBook } from "@/shared/types/google-book";
+import { SimpleBook } from "@/shared/types/google-book";
 import { alegreya } from "@/styles/fonts";
-
-const MotionTbBook2 = motion.create(TbBook2);
 
 export const Search = () => {
   const [query, setQuery] = useQueryState("q", { defaultValue: "" });
   const debouncedQuery = useDebounce(query.trim(), 800);
 
-  const [selectedBook, setSelectedBook] = useState<SearchedBook | null>(null);
+  const [selectedBook, setSelectedBook] = useState<SimpleBook | null>(null);
 
   // Search book
   const {
@@ -74,11 +66,11 @@ export const Search = () => {
 
       {/* Skeleton */}
       {isLoading ? (
-        <SearchLoadingSkeleton />
+        <BookListLoader />
       ) : isError ? (
         debouncedQuery && <p className="text-red-500">Something went wrong!</p>
       ) : books.length > 0 ? (
-        <ul className="gap- flex w-full flex-col">
+        <ul className="flex w-full flex-col">
           {books.map((book) => (
             <SingleBook
               key={book.id}
@@ -91,346 +83,12 @@ export const Search = () => {
         debouncedQuery && <p className="text-neutral-500">No results found</p>
       )}
 
-      {/* Selected Book */}
-      <SelectedBook book={selectedBook} setSelectedBook={setSelectedBook} />
-    </div>
-  );
-};
-
-const SingleBook = ({
-  book,
-  setSelectedBook,
-}: {
-  book: SearchedBook;
-  setSelectedBook: Dispatch<SetStateAction<SearchedBook | null>>;
-}) => {
-  return (
-    <motion.li
-      layoutId={`book-${book.id}`}
-      transition={{
-        type: "spring",
-        duration: 0.5,
-        bounce: 0.2,
-      }}
-      onClick={() => setSelectedBook(book)}
-      style={{ borderRadius: 0 }}
-      className="group flex cursor-pointer flex-col gap-4 pt-4"
-    >
-      <div className="flex h-32 w-full gap-3 smd:h-40 smd:gap-4">
-        {/* Book image */}
-        <motion.div
-          layoutId={`book-image-${book.id}`}
-          transition={{
-            type: "spring",
-            duration: 0.5,
-            bounce: 0.2,
-          }}
-          className="relative aspect-2/3 h-full shadow-md"
-        >
-          <div className="absolute inset-0 flex items-center justify-center bg-[#e1d8cf] text-neutral-400">
-            <MotionTbBook2
-              layoutId={`book-icon-${book.id}`}
-              transition={{
-                type: "spring",
-                duration: 0.5,
-                bounce: 0.2,
-              }}
-              size={40}
-            />
-          </div>
-          {book.image ? (
-            <Image
-              src={book.image}
-              alt={""}
-              fill
-              className="object-cover object-center"
-            />
-          ) : null}
-        </motion.div>
-
-        {/* Book title, author */}
-        <div className="flex flex-col gap-1">
-          {/* Title */}
-          <motion.p
-            layoutId={`book-title-${book.id}`}
-            transition={{
-              type: "spring",
-              duration: 0.5,
-              bounce: 0.2,
-            }}
-            className={cn(
-              "line-clamp-2 text-xl leading-tight font-semibold text-neutral-800 transition-colors duration-200 group-hover:text-brand-500 md:text-2xl",
-              alegreya.className,
-            )}
-          >
-            {book.title}
-          </motion.p>
-
-          {/* Authors */}
-          <motion.p
-            layoutId={`book-author-${book.id}`}
-            transition={{
-              type: "spring",
-              duration: 0.5,
-              bounce: 0.2,
-            }}
-            className="line-clamp-2 text-[13px]/[18px] font-semibold text-neutral-600 md:text-sm"
-          >
-            {book.authors?.join(", ")}
-          </motion.p>
-
-          {/* Description */}
-          <motion.p
-            layoutId={`book-desc-${book.id}`}
-            transition={{
-              type: "spring",
-              duration: 0.5,
-              bounce: 0.2,
-            }}
-            className="mt-2 line-clamp-2 text-[13px]/[18px] text-neutral-600 smd:mt-2 smd:line-clamp-3 md:text-sm"
-          >
-            {book?.description}
-          </motion.p>
-        </div>
-      </div>
-
-      <div className="h-px w-full bg-neutral-300 group-last:hidden" />
-    </motion.li>
-  );
-};
-
-const SelectedBook = ({
-  book,
-  setSelectedBook,
-}: {
-  book: SearchedBook | null;
-  setSelectedBook: Dispatch<SetStateAction<SearchedBook | null>>;
-}) => {
-  const ref = useClickAway<HTMLDivElement>(() => {
-    setSelectedBook(null);
-  });
-
-  // Close modal when the `esc` key is pressed
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      if (event.key === "Escape") {
-        setSelectedBook(null);
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [setSelectedBook]);
-
-  // Stop page from scrolling when the modal is open
-  useEffect(() => {
-    if (book) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [book]);
-
-  return (
-    <AnimatePresence>
-      {book ? (
-        <>
-          {/* Overlay */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{
-              type: "spring",
-              duration: 0.5,
-              bounce: 0.2,
-            }}
-            className="fixed inset-0 z-50 bg-black/20 backdrop-blur-sm"
-          />
-
-          {/* Selected Book */}
-          <div className="fixed inset-0 z-50 grid place-items-center px-2">
-            <motion.div
-              ref={ref}
-              layoutId={`book-${book.id}`}
-              transition={{
-                type: "spring",
-                duration: 0.5,
-                bounce: 0.2,
-              }}
-              style={{ borderRadius: 0 }}
-              onClick={() => console.log(book.image)}
-              className="group relative flex max-h-[95dvh] w-full max-w-4xl flex-col gap-4 overflow-auto border-neutral-300 bg-background p-4 shadow-md md:p-6"
-            >
-              <div className="flex w-full flex-col gap-4 smd:gap-4 md:h-80 md:flex-row">
-                {/* Book image */}
-                <motion.div
-                  layoutId={`book-image-${book.id}`}
-                  transition={{
-                    type: "spring",
-                    duration: 0.5,
-                    bounce: 0.2,
-                  }}
-                  className="relative z-65 aspect-2/3 h-60 self-start shadow-md sm:h-70 smd:h-88 md:h-full"
-                >
-                  <div className="absolute inset-0 flex items-center justify-center bg-[#e1d8cf] text-neutral-400">
-                    <MotionTbBook2
-                      layoutId={`book-icon-${book.id}`}
-                      transition={{
-                        type: "spring",
-                        duration: 0.5,
-                        bounce: 0.2,
-                      }}
-                      size={40}
-                    />
-                  </div>
-                  {book.image ? (
-                    <Image
-                      src={book.image}
-                      alt={""}
-                      fill
-                      className="object-cover object-center"
-                    />
-                  ) : null}
-                </motion.div>
-
-                {/* Book title, author and desc */}
-                <div className="relative flex flex-col gap-1">
-                  <div className="flex flex-col gap-1">
-                    {/* Title */}
-                    <motion.p
-                      layoutId={`book-title-${book.id}`}
-                      transition={{
-                        type: "spring",
-                        duration: 0.5,
-                        bounce: 0.2,
-                      }}
-                      className={cn(
-                        "text-xl leading-tight font-semibold text-brand-500 transition-colors duration-200 md:text-2xl",
-                        alegreya.className,
-                      )}
-                    >
-                      {book.title}
-                    </motion.p>
-
-                    {/* Authors */}
-                    <motion.p
-                      layoutId={`book-author-${book.id}`}
-                      transition={{
-                        type: "spring",
-                        duration: 0.5,
-                        bounce: 0.2,
-                      }}
-                      className="max-h-[8dvh] overflow-auto text-[13px]/[18px] font-semibold text-neutral-600 md:text-sm"
-                    >
-                      {book.authors?.join(", ")}
-                    </motion.p>
-                  </div>
-
-                  {/* Description */}
-                  {book?.description ? (
-                    <motion.p
-                      layoutId={`book-desc-${book.id}`}
-                      transition={{
-                        type: "spring",
-                        duration: 0.5,
-                        bounce: 0.2,
-                      }}
-                      className="mt-2 max-h-[15dvh] overflow-auto text-[13px]/[18px] text-neutral-600 sm:max-h-[20dvh] smd:mt-2 smd:max-h-[25dvh] md:max-h-auto md:text-sm"
-                    >
-                      {book?.description}
-                    </motion.p>
-                  ) : null}
-                </div>
-              </div>
-
-              {/* Buttons */}
-              <div className="sticky bottom-0 bg-background">
-                {/* Small */}
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    y: -30,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    y: -30,
-                  }}
-                  transition={{ duration: 0.2 }}
-                  className="flex flex-col-reverse gap-3 smd:flex-row md:hidden"
-                >
-                  <Button
-                    size={"lg"}
-                    variant={"secondary"}
-                    onClick={() => setSelectedBook(null)}
-                    className="relative w-full gap-2 overflow-hidden"
-                  >
-                    Close
-                  </Button>
-                  <Button
-                    size={"lg"}
-                    className="relative w-full gap-2 overflow-hidden"
-                  >
-                    Add
-                  </Button>
-                </motion.div>
-
-                {/* Large */}
-                <motion.div
-                  initial={{
-                    opacity: 0,
-                    y: -30,
-                  }}
-                  animate={{
-                    opacity: 1,
-                    y: 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    y: -30,
-                  }}
-                  transition={{ duration: 0.1 }}
-                  className="hidden flex-col-reverse gap-3 smd:flex-row md:flex"
-                >
-                  <Button
-                    size={"xl"}
-                    variant={"secondary"}
-                    onClick={() => setSelectedBook(null)}
-                    className="relative w-full gap-2 overflow-hidden"
-                  >
-                    Close
-                  </Button>
-                  <Button
-                    size={"xl"}
-                    className="relative w-full gap-2 overflow-hidden"
-                  >
-                    Add
-                  </Button>
-                </motion.div>
-              </div>
-            </motion.div>
-          </div>
-        </>
-      ) : null}
-    </AnimatePresence>
-  );
-};
-
-const SearchLoadingSkeleton = () => {
-  useLockBodyScroll();
-
-  return (
-    <div className="flex w-full flex-col gap-3">
-      {[...Array(20)].map((_, i) => (
-        <Skeleton key={i} className="h-40 w-full rounded-none" />
-      ))}
+      {/* Book Modal */}
+      <BookModal
+        book={selectedBook}
+        setSelectedBook={setSelectedBook}
+        allowBookAdding
+      />
     </div>
   );
 };
