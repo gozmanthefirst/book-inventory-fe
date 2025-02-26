@@ -93,7 +93,7 @@ export const ForgotPasswordForm = () => {
       <div className="flex flex-col gap-1">
         <h1
           className={cn(
-            "text-3xl font-semibold text-brand-400",
+            "text-3xl font-semibold text-brand-500",
             alegreya.className,
           )}
         >
@@ -103,7 +103,7 @@ export const ForgotPasswordForm = () => {
           Remembered your password?{" "}
           <Link
             href={"/sign-in"}
-            className="text-brand-400 lg:hover:underline lg:hover:underline-offset-2"
+            className="text-brand-500 lg:hover:underline lg:hover:underline-offset-2"
           >
             Sign in
           </Link>

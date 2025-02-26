@@ -22,7 +22,7 @@ export const Input = ({
     <input
       type={type}
       className={cn(
-        "flex h-12 w-full border border-neutral-300 bg-transparent px-4 py-1 text-sm text-neutral-900 transition duration-200 group-first:rounded-t-2xl group-last:rounded-b-2xl file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 hover:border-brand-200 focus-visible:border-brand-400 focus-visible:ring-4 focus-visible:ring-brand-400/20 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
+        "flex h-12 w-full border border-neutral-300 bg-transparent px-4 py-1 text-sm text-neutral-900 transition duration-200 group-first:rounded-t-2xl group-last:rounded-b-2xl file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-neutral-400 hover:border-brand-200 focus-visible:border-brand-500 focus-visible:ring-4 focus-visible:ring-brand-500/20 focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50",
         Array.isArray(errors) &&
           errors?.length > 0 &&
           "border-red-300 bg-red-400/15 hover:border-red-300 focus-visible:border-red-500 focus-visible:ring-red-500/20",

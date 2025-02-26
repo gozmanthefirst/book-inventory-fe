@@ -123,7 +123,7 @@ export const SignInForm = () => {
       <div className="flex flex-col gap-1">
         <h1
           className={cn(
-            "text-3xl font-semibold text-brand-400",
+            "text-3xl font-semibold text-brand-500",
             alegreya.className,
           )}
         >
@@ -133,7 +133,7 @@ export const SignInForm = () => {
           {`Don't have an account?`}{" "}
           <Link
             href={"/sign-up"}
-            className="text-brand-400 lg:hover:underline lg:hover:underline-offset-2"
+            className="text-brand-500 lg:hover:underline lg:hover:underline-offset-2"
           >
             Sign up
           </Link>
@@ -238,7 +238,7 @@ export const SignInForm = () => {
         {/* Forgot Password */}
         <Link
           href={"/forgot-password"}
-          className="self-start text-xs text-brand-400 lg:hover:underline lg:hover:underline-offset-2"
+          className="self-start text-xs text-brand-500 lg:hover:underline lg:hover:underline-offset-2"
         >
           Forgot your password?
         </Link>

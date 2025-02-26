@@ -12,7 +12,7 @@ export const buttonVariants = cva(
     variants: {
       variant: {
         brand:
-          "bg-brand-400 text-background shadow-sm lg:hover:bg-brand-300 focus-visible:outline-brand-400",
+          "bg-brand-500 text-background shadow-sm lg:hover:bg-brand-300 focus-visible:outline-brand-500",
         destructive:
           "bg-red-600 text-background shadow-sm lg:hover:bg-red-500 focus-visible:outline-red-600",
         white:
@@ -20,11 +20,11 @@ export const buttonVariants = cva(
         black:
           "bg-neutral-950 text-white shadow-sm lg:hover:bg-neutral-950/90 focus-visible:outline-neutral-950",
         secondary:
-          "bg-neutral-200 border border-neutral-300 text-brand-400 shadow-sm lg:hover:bg-neutral-300/70 focus-visible:outline-brand-400",
+          "bg-neutral-200 border border-neutral-300 text-brand-500 shadow-sm lg:hover:bg-neutral-300/70 focus-visible:outline-brand-500",
         grayed:
           "bg-neutral-600 text-foreground shadow-sm lg:hover:bg-neutral-600/90 focus-visible:outline-neutral-600",
         outline:
-          "border border-brand-500 bg-inherit text-brand-400 shadow-xs lg:hover:bg-brand-400/10 lg:hover:border-brand-400",
+          "border border-brand-600 bg-inherit text-brand-500 shadow-xs lg:hover:bg-brand-500/10 lg:hover:border-brand-500",
         ghost:
           "border-none bg-inherit text-neutral-200 lg:hover:text-neutral-100 focus-visible:outline-hidden focus-visible:outline-0 focus-visible:outline-offset-0",
       },

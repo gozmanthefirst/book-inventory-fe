@@ -51,7 +51,7 @@ export const Search = () => {
       <div className="flex flex-col gap-3">
         <h1
           className={cn(
-            "text-3xl font-semibold text-brand-400",
+            "text-3xl font-semibold text-brand-500",
             alegreya.className,
           )}
         >
@@ -78,7 +78,7 @@ export const Search = () => {
       ) : isError ? (
         debouncedQuery && <p className="text-red-500">Something went wrong!</p>
       ) : books.length > 0 ? (
-        <ul className="flex w-full flex-col gap-4">
+        <ul className="gap- flex w-full flex-col">
           {books.map((book) => (
             <SingleBook
               key={book.id}
@@ -114,7 +114,7 @@ const SingleBook = ({
       }}
       onClick={() => setSelectedBook(book)}
       style={{ borderRadius: 0 }}
-      className="group flex cursor-pointer flex-col gap-4"
+      className="group flex cursor-pointer flex-col gap-4 pt-4"
     >
       <div className="flex h-32 w-full gap-3 smd:h-40 smd:gap-4">
         {/* Book image */}
@@ -127,7 +127,7 @@ const SingleBook = ({
           }}
           className="relative aspect-2/3 h-full shadow-md"
         >
-          <div className="absolute inset-0 flex items-center justify-center bg-black/10 text-neutral-400">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#e1d8cf] text-neutral-400">
             <MotionTbBook2
               layoutId={`book-icon-${book.id}`}
               transition={{
@@ -159,7 +159,7 @@ const SingleBook = ({
               bounce: 0.2,
             }}
             className={cn(
-              "line-clamp-2 text-xl leading-tight font-semibold text-neutral-800 transition-colors duration-200 group-hover:text-brand-400 md:text-2xl",
+              "line-clamp-2 text-xl leading-tight font-semibold text-neutral-800 transition-colors duration-200 group-hover:text-brand-500 md:text-2xl",
               alegreya.className,
             )}
           >
@@ -276,7 +276,7 @@ const SelectedBook = ({
                   }}
                   className="relative z-65 aspect-2/3 h-60 self-start shadow-md sm:h-70 smd:h-88 md:h-full"
                 >
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/10 text-neutral-400">
+                  <div className="absolute inset-0 flex items-center justify-center bg-[#e1d8cf] text-neutral-400">
                     <MotionTbBook2
                       layoutId={`book-icon-${book.id}`}
                       transition={{
@@ -309,7 +309,7 @@ const SelectedBook = ({
                         bounce: 0.2,
                       }}
                       className={cn(
-                        "text-xl leading-tight font-semibold text-brand-400 transition-colors duration-200 md:text-2xl",
+                        "text-xl leading-tight font-semibold text-brand-500 transition-colors duration-200 md:text-2xl",
                         alegreya.className,
                       )}
                     >
@@ -363,7 +363,7 @@ const SelectedBook = ({
                     opacity: 0,
                     y: -30,
                   }}
-                  transition={{ duration: 0.1 }}
+                  transition={{ duration: 0.2 }}
                   className="flex flex-col-reverse gap-3 smd:flex-row md:hidden"
                 >
                   <Button

@@ -33,7 +33,7 @@ export const ScreenSize = () => {
   return (
     <div
       className={cn(
-        "fixed right-3 bottom-3 z-500 flex items-center space-x-2 rounded-full bg-brand-400 px-2.5 py-1 text-sm font-semibold text-background shadow-md transition-opacity duration-300",
+        "fixed right-3 bottom-3 z-500 flex items-center space-x-2 rounded-full bg-brand-500 px-2.5 py-1 text-sm font-semibold text-background shadow-md transition-opacity duration-300",
         dimensions.width === 0 ? "opacity-0" : "opacity-100",
         alegreya.className,
       )}
