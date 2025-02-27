@@ -10,11 +10,14 @@ import { RotatingLines } from "react-loader-spinner";
 
 // Local Imports
 import { addBook } from "@/features/my-books/actions/add-book";
+import { getMyBooks } from "@/features/my-books/actions/get-my-books";
 import { Button } from "@/shared/components/button";
 import { cn } from "@/shared/lib/utils/cn";
+import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
 import { ServerActionResponse } from "@/shared/types/shared-types";
 import { alegreya } from "@/styles/fonts";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const MotionTbBook2 = motion.create(TbBook2);
 
@@ -66,6 +69,8 @@ export const BookModal = ({
     };
   }, [book]);
 
+  const queryClient = useQueryClient();
+
   const handleAddBook = async () => {
     if (!book) return;
 
@@ -78,6 +83,9 @@ export const BookModal = ({
         return setButtonState("error");
       }
 
+      queryClient.invalidateQueries({
+        queryKey: ["my-books"],
+      });
       setButtonState("success");
     } catch (error) {
       if (process.env.NODE_ENV !== "production") {
@@ -207,6 +215,7 @@ export const BookModal = ({
               <div className="sticky bottom-0 bg-background">
                 {/* Small */}
                 <BookModalButtons
+                  book={book}
                   handleAddBook={handleAddBook}
                   setSelectedBook={setSelectedBook}
                   size="lg"
@@ -216,6 +225,7 @@ export const BookModal = ({
 
                 {/* Large */}
                 <BookModalButtons
+                  book={book}
                   handleAddBook={handleAddBook}
                   setSelectedBook={setSelectedBook}
                   size="xl"
@@ -232,12 +242,14 @@ export const BookModal = ({
 };
 
 const BookModalButtons = ({
+  book,
   handleAddBook,
   setSelectedBook,
   size,
   buttonState,
   allowBookAdding,
 }: {
+  book: SimpleBook;
   handleAddBook: () => Promise<void>;
   setSelectedBook: Dispatch<SetStateAction<SimpleBook | null>>;
   size: "lg" | "xl";
@@ -249,6 +261,12 @@ const BookModalButtons = ({
     visible: { opacity: 1, y: 0 },
     exit: { opacity: 0, y: 40 },
   };
+
+  // Get my books
+  const { data: { data: myBooks } = {} } = useQuery({
+    queryKey: ["my-books"],
+    queryFn: () => runParallelAction(getMyBooks()),
+  });
 
   return (
     <motion.div
@@ -279,12 +297,22 @@ const BookModalButtons = ({
       >
         Close
       </Button>
-      {allowBookAdding ? (
+      {allowBookAdding &&
+      !myBooks?.some(
+        (myBook) =>
+          myBook.isbn === book?.isbn13 || myBook.isbn === book?.isbn10,
+      ) ? (
         <Button
           size={size}
           variant={buttonState === "error" ? "destructive" : "brand"}
           onClick={handleAddBook}
-          disabled={buttonState !== "idle"}
+          disabled={
+            buttonState !== "idle" ||
+            myBooks?.some(
+              (myBook) =>
+                myBook.isbn === book.isbn13 || myBook.isbn === book.isbn10,
+            )
+          }
           className="relative w-full gap-2 overflow-hidden"
         >
           <AnimatePresence mode="popLayout" initial={false}>
