@@ -117,6 +117,9 @@ export const BookModal = ({
         ...prev,
         [book.id]: "success",
       }));
+      setTimeout(() => {
+        setSelectedBook(null);
+      }, 800);
     } catch (error) {
       if (process.env.NODE_ENV !== "production") {
         console.error(error);
