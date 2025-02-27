@@ -11,6 +11,7 @@ import { RotatingLines } from "react-loader-spinner";
 // Local Imports
 import { addBook } from "@/features/my-books/actions/add-book";
 import { getMyBooks } from "@/features/my-books/actions/get-my-books";
+import { removeBook } from "@/features/my-books/actions/remove-book";
 import { Button } from "@/shared/components/button";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
@@ -28,22 +29,37 @@ const addButtonCopy = {
   error: "Something went wrong",
 };
 
+const removeButtonCopy = {
+  idle: "Remove",
+  loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
+  success: "Book removed successfully!",
+  error: "Something went wrong",
+};
+
 export const BookModal = ({
   book,
   setSelectedBook,
-  allowBookAdding,
+  allowBookAdding = false,
+  allowBookRemoving = false,
 }: {
   book: SimpleBook | null;
   setSelectedBook: Dispatch<SetStateAction<SimpleBook | null>>;
-  allowBookAdding: boolean;
+  allowBookAdding?: boolean;
+  allowBookRemoving?: boolean;
 }) => {
-  // States object to store button states for each book by ID
-  const [buttonStates, setButtonStates] = useState<
+  // States object to store add button states for each book by ID
+  const [addButtonStates, setAddButtonStates] = useState<
     Record<string, "idle" | "loading" | "success" | "error">
   >({});
+  const addButtonState = book ? addButtonStates[book.id] || "idle" : "idle";
 
-  // Get current button state for this book
-  const buttonState = book ? buttonStates[book.id] || "idle" : "idle";
+  // States object to store remove button states for each book by ID
+  const [removeButtonStates, setRemoveButtonStates] = useState<
+    Record<string, "idle" | "loading" | "success" | "error">
+  >({});
+  const removeButtonState = book
+    ? removeButtonStates[book.id] || "idle"
+    : "idle";
 
   const ref = useClickAway<HTMLDivElement>(() => {
     setSelectedBook(null);
@@ -75,11 +91,12 @@ export const BookModal = ({
 
   const queryClient = useQueryClient();
 
+  // Function to add book
   const handleAddBook = async () => {
     if (!book) return;
 
     try {
-      setButtonStates((prev) => ({
+      setAddButtonStates((prev) => ({
         ...prev,
         [book.id]: "loading",
       }));
@@ -87,7 +104,7 @@ export const BookModal = ({
       const response: ServerActionResponse = await addBook(book);
 
       if (response.status === "error") {
-        return setButtonStates((prev) => ({
+        return setAddButtonStates((prev) => ({
           ...prev,
           [book.id]: "error",
         }));
@@ -96,7 +113,7 @@ export const BookModal = ({
       queryClient.invalidateQueries({
         queryKey: ["my-books"],
       });
-      setButtonStates((prev) => ({
+      setAddButtonStates((prev) => ({
         ...prev,
         [book.id]: "success",
       }));
@@ -105,13 +122,62 @@ export const BookModal = ({
         console.error(error);
       }
 
-      setButtonStates((prev) => ({
+      setAddButtonStates((prev) => ({
         ...prev,
         [book.id]: "error",
       }));
     } finally {
       setTimeout(() => {
-        setButtonStates((prev) => ({
+        setAddButtonStates((prev) => ({
+          ...prev,
+          [book.id]: "idle",
+        }));
+      }, 3000);
+    }
+  };
+
+  // Function to remove book
+  const handleRemoveBook = async () => {
+    if (!book) return;
+
+    try {
+      setRemoveButtonStates((prev) => ({
+        ...prev,
+        [book.id]: "loading",
+      }));
+
+      const response: ServerActionResponse = await removeBook(book);
+
+      if (response.status === "error") {
+        return setRemoveButtonStates((prev) => ({
+          ...prev,
+          [book.id]: "error",
+        }));
+      }
+
+      setSelectedBook(null);
+      setRemoveButtonStates((prev) => ({
+        ...prev,
+        [book.id]: "success",
+      }));
+
+      setTimeout(() => {
+        queryClient.invalidateQueries({
+          queryKey: ["my-books"],
+        });
+      }, 1000);
+    } catch (error) {
+      if (process.env.NODE_ENV !== "production") {
+        console.error(error);
+      }
+
+      setRemoveButtonStates((prev) => ({
+        ...prev,
+        [book.id]: "error",
+      }));
+    } finally {
+      setTimeout(() => {
+        setRemoveButtonStates((prev) => ({
           ...prev,
           [book.id]: "idle",
         }));
@@ -236,20 +302,26 @@ export const BookModal = ({
                 <BookModalButtons
                   book={book}
                   handleAddBook={handleAddBook}
+                  handleRemoveBook={handleRemoveBook}
                   setSelectedBook={setSelectedBook}
                   size="lg"
-                  buttonState={buttonState}
+                  addButtonState={addButtonState}
+                  removeButtonState={removeButtonState}
                   allowBookAdding={allowBookAdding}
+                  allowBookRemoving={allowBookRemoving}
                 />
 
                 {/* Large */}
                 <BookModalButtons
                   book={book}
                   handleAddBook={handleAddBook}
+                  handleRemoveBook={handleRemoveBook}
                   setSelectedBook={setSelectedBook}
                   size="xl"
-                  buttonState={buttonState}
+                  addButtonState={addButtonState}
+                  removeButtonState={removeButtonState}
                   allowBookAdding={allowBookAdding}
+                  allowBookRemoving={allowBookRemoving}
                 />
               </div>
             </motion.div>
@@ -263,17 +335,23 @@ export const BookModal = ({
 const BookModalButtons = ({
   book,
   handleAddBook,
+  handleRemoveBook,
   setSelectedBook,
   size,
-  buttonState,
+  addButtonState,
+  removeButtonState,
   allowBookAdding,
+  allowBookRemoving,
 }: {
   book: SimpleBook;
   handleAddBook: () => Promise<void>;
+  handleRemoveBook: () => Promise<void>;
   setSelectedBook: Dispatch<SetStateAction<SimpleBook | null>>;
   size: "lg" | "xl";
-  buttonState: "idle" | "loading" | "success" | "error";
+  addButtonState: "idle" | "loading" | "success" | "error";
+  removeButtonState: "idle" | "loading" | "success" | "error";
   allowBookAdding: boolean;
+  allowBookRemoving: boolean;
 }) => {
   const variants = {
     initial: { opacity: 0, y: -40 },
@@ -312,6 +390,7 @@ const BookModalButtons = ({
           : "flex flex-col-reverse gap-3 smd:flex-row md:hidden"
       }
     >
+      {/* Close */}
       <Button
         size={size}
         variant={"secondary"}
@@ -320,26 +399,52 @@ const BookModalButtons = ({
       >
         Close
       </Button>
+
+      {/* Add */}
       {allowBookAdding ? (
         <Button
           size={size}
-          variant={buttonState === "error" ? "destructive" : "brand"}
+          variant={addButtonState === "error" ? "destructive" : "brand"}
           onClick={handleAddBook}
-          disabled={buttonState !== "idle" || isBookAdded}
+          disabled={addButtonState !== "idle" || isBookAdded}
           className="relative w-full gap-2 overflow-hidden"
         >
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
-              key={buttonState}
+              key={addButtonState}
               transition={{ type: "spring", bounce: 0, duration: 0.3 }}
               initial="initial"
               animate="visible"
               exit="exit"
               variants={variants}
             >
-              {isBookAdded && buttonState === "idle"
+              {isBookAdded && addButtonState === "idle"
                 ? "Added"
-                : addButtonCopy[buttonState]}
+                : addButtonCopy[addButtonState]}
+            </motion.div>
+          </AnimatePresence>
+        </Button>
+      ) : null}
+
+      {/* Remove */}
+      {allowBookRemoving ? (
+        <Button
+          size={size}
+          variant={removeButtonState === "error" ? "destructive" : "brand"}
+          onClick={handleRemoveBook}
+          disabled={removeButtonState !== "idle"}
+          className="relative w-full gap-2 overflow-hidden"
+        >
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={removeButtonState}
+              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+              initial="initial"
+              animate="visible"
+              exit="exit"
+              variants={variants}
+            >
+              {removeButtonCopy[removeButtonState]}
             </motion.div>
           </AnimatePresence>
         </Button>

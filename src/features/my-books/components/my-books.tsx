@@ -68,7 +68,7 @@ export const MyBooks = () => {
       <BookModal
         book={selectedBook}
         setSelectedBook={setSelectedBook}
-        allowBookAdding={false}
+        allowBookRemoving
       />
     </div>
   );
