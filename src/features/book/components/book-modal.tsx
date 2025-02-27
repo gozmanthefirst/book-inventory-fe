@@ -4,7 +4,7 @@
 import { useClickAway } from "@uidotdev/usehooks";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
 import { TbBook2 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -37,9 +37,13 @@ export const BookModal = ({
   setSelectedBook: Dispatch<SetStateAction<SimpleBook | null>>;
   allowBookAdding: boolean;
 }) => {
-  const [buttonState, setButtonState] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+  // States object to store button states for each book by ID
+  const [buttonStates, setButtonStates] = useState<
+    Record<string, "idle" | "loading" | "success" | "error">
+  >({});
+
+  // Get current button state for this book
+  const buttonState = book ? buttonStates[book.id] || "idle" : "idle";
 
   const ref = useClickAway<HTMLDivElement>(() => {
     setSelectedBook(null);
@@ -75,27 +79,42 @@ export const BookModal = ({
     if (!book) return;
 
     try {
-      setButtonState("loading");
+      setButtonStates((prev) => ({
+        ...prev,
+        [book.id]: "loading",
+      }));
 
       const response: ServerActionResponse = await addBook(book);
 
       if (response.status === "error") {
-        return setButtonState("error");
+        return setButtonStates((prev) => ({
+          ...prev,
+          [book.id]: "error",
+        }));
       }
 
       queryClient.invalidateQueries({
         queryKey: ["my-books"],
       });
-      setButtonState("success");
+      setButtonStates((prev) => ({
+        ...prev,
+        [book.id]: "success",
+      }));
     } catch (error) {
       if (process.env.NODE_ENV !== "production") {
         console.error(error);
       }
 
-      setButtonState("error");
+      setButtonStates((prev) => ({
+        ...prev,
+        [book.id]: "error",
+      }));
     } finally {
       setTimeout(() => {
-        setButtonState("idle");
+        setButtonStates((prev) => ({
+          ...prev,
+          [book.id]: "idle",
+        }));
       }, 3000);
     }
   };

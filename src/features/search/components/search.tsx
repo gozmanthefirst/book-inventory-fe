@@ -21,7 +21,7 @@ import { alegreya } from "@/styles/fonts";
 
 export const Search = () => {
   const [query, setQuery] = useQueryState("q", { defaultValue: "" });
-  const debouncedQuery = useDebounce(query.trim(), 800);
+  const debouncedQuery = useDebounce(query.trim(), 1000);
 
   const [selectedBook, setSelectedBook] = useState<SimpleBook | null>(null);
 
