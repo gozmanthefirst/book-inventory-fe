@@ -4,7 +4,7 @@
 import { useClickAway } from "@uidotdev/usehooks";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useRef, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { TbBook2 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -287,6 +287,10 @@ const BookModalButtons = ({
     queryFn: () => runParallelAction(getMyBooks()),
   });
 
+  const isBookAdded = myBooks?.some(
+    (myBook) => myBook.isbn === book?.isbn13 || myBook.isbn === book?.isbn10,
+  );
+
   return (
     <motion.div
       initial={{
@@ -316,22 +320,12 @@ const BookModalButtons = ({
       >
         Close
       </Button>
-      {allowBookAdding &&
-      !myBooks?.some(
-        (myBook) =>
-          myBook.isbn === book?.isbn13 || myBook.isbn === book?.isbn10,
-      ) ? (
+      {allowBookAdding ? (
         <Button
           size={size}
           variant={buttonState === "error" ? "destructive" : "brand"}
           onClick={handleAddBook}
-          disabled={
-            buttonState !== "idle" ||
-            myBooks?.some(
-              (myBook) =>
-                myBook.isbn === book.isbn13 || myBook.isbn === book.isbn10,
-            )
-          }
+          disabled={buttonState !== "idle" || isBookAdded}
           className="relative w-full gap-2 overflow-hidden"
         >
           <AnimatePresence mode="popLayout" initial={false}>
@@ -343,7 +337,9 @@ const BookModalButtons = ({
               exit="exit"
               variants={variants}
             >
-              {addButtonCopy[buttonState]}
+              {isBookAdded && buttonState === "idle"
+                ? "Added"
+                : addButtonCopy[buttonState]}
             </motion.div>
           </AnimatePresence>
         </Button>
