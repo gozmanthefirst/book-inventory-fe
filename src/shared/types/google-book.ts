@@ -30,6 +30,7 @@ export type SimpleBook = {
   isbn10: string;
   isbn13: string;
   pageCount: number;
+  readStatus: "UNREAD" | "READ" | "READING";
   categories: string[];
   image?: string;
 };

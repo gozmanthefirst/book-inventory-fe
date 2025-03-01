@@ -1,6 +1,7 @@
 "use server";
 
 // External Imports
+import { ReadStatus } from "@prisma/client";
 import axios from "axios";
 
 // Local Imports
@@ -40,6 +41,7 @@ export const searchBook = createParallelAction(
                 (identifier) => identifier.type === "ISBN_13",
               )?.identifier || "",
             pageCount: book.volumeInfo.pageCount,
+            readStatus: "UNREAD" as ReadStatus,
             categories: book.volumeInfo.categories,
             image: book.volumeInfo.imageLinks?.thumbnail || "",
           };

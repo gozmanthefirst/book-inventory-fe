@@ -34,6 +34,7 @@ export const addBook = async (
       publisher: book.publisher,
       publishedDate: book.publishedDate,
       pageCount: book.pageCount,
+      readStatus: book.readStatus || "UNREAD",
       authors: book.authors,
       genres: book.categories,
     });

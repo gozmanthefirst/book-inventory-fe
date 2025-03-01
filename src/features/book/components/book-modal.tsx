@@ -21,6 +21,7 @@ import { alegreya } from "@/styles/fonts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const MotionTbBook2 = motion.create(TbBook2);
+const MotionButton = motion.create(Button);
 
 const addButtonCopy = {
   idle: "Add",
@@ -61,6 +62,12 @@ export const BookModal = ({
     ? removeButtonStates[book.id] || "idle"
     : "idle";
 
+  // State to store chosen read status
+  const [readStatus, setReadStatus] = useState<
+    "UNREAD" | "READING" | "READ" | null
+  >(null);
+
+  // Close modal when a anywhere outside the modal is clicked
   const ref = useClickAway<HTMLDivElement>(() => {
     setSelectedBook(null);
   });
@@ -101,7 +108,10 @@ export const BookModal = ({
         [book.id]: "loading",
       }));
 
-      const response: ServerActionResponse = await addBook(book);
+      const response: ServerActionResponse = await addBook({
+        ...book,
+        readStatus: readStatus || "UNREAD",
+      });
 
       if (response.status === "error") {
         return setAddButtonStates((prev) => ({
@@ -312,6 +322,8 @@ export const BookModal = ({
                   removeButtonState={removeButtonState}
                   allowBookAdding={allowBookAdding}
                   allowBookRemoving={allowBookRemoving}
+                  readStatus={readStatus}
+                  setReadStatus={setReadStatus}
                 />
 
                 {/* Large */}
@@ -325,6 +337,8 @@ export const BookModal = ({
                   removeButtonState={removeButtonState}
                   allowBookAdding={allowBookAdding}
                   allowBookRemoving={allowBookRemoving}
+                  readStatus={readStatus}
+                  setReadStatus={setReadStatus}
                 />
               </div>
             </motion.div>
@@ -345,6 +359,8 @@ const BookModalButtons = ({
   removeButtonState,
   allowBookAdding,
   allowBookRemoving,
+  readStatus,
+  setReadStatus,
 }: {
   book: SimpleBook;
   handleAddBook: () => Promise<void>;
@@ -355,6 +371,8 @@ const BookModalButtons = ({
   removeButtonState: "idle" | "loading" | "success" | "error";
   allowBookAdding: boolean;
   allowBookRemoving: boolean;
+  readStatus: "UNREAD" | "READING" | "READ" | null;
+  setReadStatus: Dispatch<SetStateAction<"UNREAD" | "READING" | "READ" | null>>;
 }) => {
   const variants = {
     initial: { opacity: 0, y: -40 },
@@ -405,28 +423,14 @@ const BookModalButtons = ({
 
       {/* Add */}
       {allowBookAdding ? (
-        <Button
+        <AddButton
           size={size}
-          variant={addButtonState === "error" ? "destructive" : "brand"}
-          onClick={handleAddBook}
-          disabled={addButtonState !== "idle" || isBookAdded}
-          className="relative w-full gap-2 overflow-hidden"
-        >
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={addButtonState}
-              transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-              initial="initial"
-              animate="visible"
-              exit="exit"
-              variants={variants}
-            >
-              {isBookAdded && addButtonState === "idle"
-                ? "Added"
-                : addButtonCopy[addButtonState]}
-            </motion.div>
-          </AnimatePresence>
-        </Button>
+          addButtonState={addButtonState}
+          handleAddBook={handleAddBook}
+          isBookAdded={!!isBookAdded}
+          readStatus={readStatus}
+          setReadStatus={setReadStatus}
+        />
       ) : null}
 
       {/* Remove */}
@@ -453,5 +457,139 @@ const BookModalButtons = ({
         </Button>
       ) : null}
     </motion.div>
+  );
+};
+
+const AddButton = ({
+  size,
+  addButtonState,
+  handleAddBook,
+  isBookAdded,
+  readStatus,
+  setReadStatus,
+}: {
+  size: "lg" | "xl";
+  addButtonState: "idle" | "loading" | "success" | "error";
+  handleAddBook: () => Promise<void>;
+  isBookAdded: boolean;
+  readStatus: "UNREAD" | "READING" | "READ" | null;
+  setReadStatus: Dispatch<SetStateAction<"UNREAD" | "READING" | "READ" | null>>;
+}) => {
+  const [readStatusDdOpen, setReadStatusDdOpen] = useState(false);
+
+  // Close modal when a anywhere outside the modal is clicked
+  const readStatusDdRef = useClickAway<HTMLDivElement>(() => {
+    setReadStatusDdOpen(false);
+  });
+
+  const variants = {
+    initial: { opacity: 0, y: -40 },
+    visible: { opacity: 1, y: 0 },
+    exit: { opacity: 0, y: 40 },
+  };
+
+  return (
+    <div className="relative w-full">
+      <Button
+        size={size}
+        variant={addButtonState === "error" ? "destructive" : "brand"}
+        type="button"
+        onClick={() => setReadStatusDdOpen((o) => !o)}
+        disabled={addButtonState !== "idle" || isBookAdded}
+        className="relative w-full gap-2 overflow-hidden lg:hover:bg-brand-500"
+      >
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div
+            key={addButtonState}
+            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+            initial="initial"
+            animate="visible"
+            exit="exit"
+            variants={variants}
+          >
+            {isBookAdded && addButtonState === "idle"
+              ? "Added"
+              : addButtonCopy[addButtonState]}
+          </motion.div>
+        </AnimatePresence>
+      </Button>
+
+      {readStatusDdOpen ? (
+        <div className="absolute inset-0 cursor-pointer rounded-2xl" />
+      ) : null}
+
+      <AnimatePresence initial={false}>
+        {readStatusDdOpen ? (
+          <motion.div
+            ref={readStatusDdRef}
+            initial={{
+              scale: 0.95,
+              opacity: 0,
+              y: 5,
+              x: 5,
+            }}
+            animate={{
+              scale: 1,
+              opacity: 1,
+              y: 0,
+              x: 0,
+            }}
+            exit={{
+              scale: 0.95,
+              opacity: 0,
+              y: 5,
+              x: 5,
+            }}
+            transition={{
+              type: "spring",
+              duration: 0.3,
+              bounce: 0.2,
+            }}
+            className={cn(
+              "absolute right-0 bottom-[calc(100%_+_0.5rem)] left-0 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
+            )}
+          >
+            {["UNREAD", "READING", "READ"].map((option) => (
+              <motion.div
+                key={option.toLowerCase()}
+                onClick={() => {
+                  setReadStatus(option as "UNREAD" | "READING" | "READ");
+                  setReadStatusDdOpen((o) => !o);
+                  handleAddBook();
+                  setReadStatus(null);
+                }}
+                tabIndex={1}
+                onFocus={() =>
+                  setReadStatus(option as "UNREAD" | "READING" | "READ")
+                }
+                onMouseEnter={() =>
+                  setReadStatus(option as "UNREAD" | "READING" | "READ")
+                }
+                className={cn(
+                  "group relative flex h-10 cursor-pointer items-center justify-center bg-transparent font-semibold text-brand-500 transition duration-200 focus-visible:outline-0 md:h-12",
+                  option === readStatus || (!readStatus && option === "UNREAD")
+                    ? "text-background"
+                    : "",
+                )}
+              >
+                {option === readStatus ||
+                (!readStatus && option === "UNREAD") ? (
+                  <motion.div
+                    layoutId="option-bg"
+                    transition={{
+                      type: "spring",
+                      duration: 0.3,
+                      bounce: 0.2,
+                    }}
+                    className="absolute inset-0 rounded-xl bg-brand-500 group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-brand-500"
+                  />
+                ) : null}
+                <div className="relative">{option}</div>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : null}
+      </AnimatePresence>
+    </div>
   );
 };
