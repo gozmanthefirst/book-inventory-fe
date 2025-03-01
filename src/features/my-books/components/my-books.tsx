@@ -56,6 +56,7 @@ export const MyBooks = () => {
                 key={simpleBook.id}
                 book={simpleBook}
                 setSelectedBook={setSelectedBook}
+                showReadStatus
               />
             );
           })}
@@ -69,6 +70,7 @@ export const MyBooks = () => {
         book={selectedBook}
         setSelectedBook={setSelectedBook}
         allowBookRemoving
+        showReadStatus
       />
     </div>
   );

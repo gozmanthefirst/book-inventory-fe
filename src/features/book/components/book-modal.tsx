@@ -17,11 +17,10 @@ import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
 import { ServerActionResponse } from "@/shared/types/shared-types";
-import { alegreya } from "@/styles/fonts";
+import { alegreya, geist } from "@/styles/fonts";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const MotionTbBook2 = motion.create(TbBook2);
-const MotionButton = motion.create(Button);
 
 const addButtonCopy = {
   idle: "Add",
@@ -42,11 +41,13 @@ export const BookModal = ({
   setSelectedBook,
   allowBookAdding = false,
   allowBookRemoving = false,
+  showReadStatus = false,
 }: {
   book: SimpleBook | null;
   setSelectedBook: Dispatch<SetStateAction<SimpleBook | null>>;
   allowBookAdding?: boolean;
   allowBookRemoving?: boolean;
+  showReadStatus?: boolean;
 }) => {
   // States object to store add button states for each book by ID
   const [addButtonStates, setAddButtonStates] = useState<
@@ -290,6 +291,28 @@ export const BookModal = ({
                     >
                       {book.authors?.join(", ")}
                     </motion.p>
+
+                    {showReadStatus ? (
+                      <motion.div
+                        layoutId={`book-read-status-${book.id}`}
+                        transition={{
+                          type: "spring",
+                          duration: 0.5,
+                          bounce: 0.2,
+                        }}
+                        className={cn(
+                          "self-start rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                          book.readStatus.toLowerCase() === "read"
+                            ? "bg-green-200 text-green-800"
+                            : book.readStatus.toLowerCase() === "reading"
+                              ? "bg-blue-200 text-blue-800"
+                              : "bg-neutral-400/50 text-neutral-950",
+                          geist.className,
+                        )}
+                      >
+                        {book.readStatus}
+                      </motion.div>
+                    ) : null}
                   </div>
 
                   {/* Description */}

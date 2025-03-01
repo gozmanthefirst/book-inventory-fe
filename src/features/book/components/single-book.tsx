@@ -9,16 +9,18 @@ import { TbBook2 } from "react-icons/tb";
 // Local Imports
 import { cn } from "@/shared/lib/utils/cn";
 import { SimpleBook } from "@/shared/types/google-book";
-import { alegreya } from "@/styles/fonts";
+import { alegreya, geist } from "@/styles/fonts";
 
 const MotionTbBook2 = motion.create(TbBook2);
 
 export const SingleBook = ({
   book,
   setSelectedBook,
+  showReadStatus = false,
 }: {
   book: SimpleBook;
   setSelectedBook: Dispatch<SetStateAction<SimpleBook | null>>;
+  showReadStatus?: boolean;
 }) => {
   return (
     <motion.li
@@ -93,6 +95,28 @@ export const SingleBook = ({
           >
             {book.authors?.join(", ")}
           </motion.p>
+
+          {showReadStatus ? (
+            <motion.div
+              layoutId={`book-read-status-${book.id}`}
+              transition={{
+                type: "spring",
+                duration: 0.5,
+                bounce: 0.2,
+              }}
+              className={cn(
+                "self-start rounded-full px-2 py-0.5 text-[10px] font-semibold",
+                book.readStatus.toLowerCase() === "read"
+                  ? "bg-green-200 text-green-800"
+                  : book.readStatus.toLowerCase() === "reading"
+                    ? "bg-blue-200 text-blue-800"
+                    : "bg-neutral-400/50 text-neutral-950",
+                geist.className,
+              )}
+            >
+              {book.readStatus}
+            </motion.div>
+          ) : null}
 
           {/* Description */}
           <motion.p
