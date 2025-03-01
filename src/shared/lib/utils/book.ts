@@ -22,6 +22,7 @@ export const complexBookToSimpleBook = (
     isbn10: complexBook.isbn?.length === 10 ? complexBook.isbn : "",
     isbn13: complexBook.isbn?.length === 13 ? complexBook.isbn : "",
     pageCount: complexBook.pageCount,
+    readStatus: complexBook.readStatus,
     image: complexBook.imageUrl || "",
     authors: complexBook.authors.map((author) => author.authorName),
     categories: complexBook.genres.map((genre) => genre.genreName),
