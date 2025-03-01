@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "http",
-        hostname: "books.google.com",
+        hostname: "**",
       },
     ],
   },
