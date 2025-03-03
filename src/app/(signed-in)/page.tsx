@@ -3,15 +3,23 @@ import { redirect } from "next/navigation";
 
 // Local Imports
 import { getUser } from "@/features/auth/actions/get-user";
+import { getMyBooks } from "@/features/my-books/actions/get-my-books";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 
 const HomePage = async () => {
-  const { data: user } = await runParallelAction(getUser());
+  const [{ data: myBooks }, { data: user }] = await Promise.all([
+    runParallelAction(getMyBooks()),
+    runParallelAction(getUser()),
+  ]);
 
   if (!user) {
     redirect("/sign-in");
   } else {
-    redirect("/my-books");
+    if (myBooks?.length) {
+      redirect("/my-books");
+    } else {
+      redirect("/search");
+    }
   }
 };
 

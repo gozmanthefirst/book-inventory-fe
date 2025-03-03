@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useRef } from "react";
-import { TbBook, TbSearch } from "react-icons/tb";
+import { TbBook, TbChartDonut3, TbSearch } from "react-icons/tb";
 
 // Local Imports
 import { cn } from "@/shared/lib/utils/cn";
@@ -18,6 +18,10 @@ const NAVS = [
   {
     value: "/search",
     icon: TbSearch,
+  },
+  {
+    value: "/portfolio",
+    icon: TbChartDonut3,
   },
 ];
 
@@ -74,7 +78,7 @@ export const BottomNav = () => {
                   onFocus={() => router.push(tab.value)}
                   onKeyDown={(e) => {}}
                   className={cn(
-                    "group relative flex w-full cursor-pointer items-center justify-center rounded-full px-6 py-3 text-brand-500 transition duration-200 focus-visible:outline-0 md:px-8",
+                    "group relative flex w-full cursor-pointer items-center justify-center rounded-full px-4 py-2 text-brand-500 transition duration-200 focus-visible:outline-0 md:px-6",
                     pathname === tab.value && "text-background",
                   )}
                 >
