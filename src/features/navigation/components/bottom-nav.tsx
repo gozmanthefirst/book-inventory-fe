@@ -2,13 +2,13 @@
 
 // External Imports
 import { motion } from "motion/react";
+import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useRef } from "react";
 import { TbBook, TbSearch } from "react-icons/tb";
 
 // Local Imports
-import { Tabs, TabsList, TabsTrigger } from "@/shared/components/tabs";
 import { cn } from "@/shared/lib/utils/cn";
-import Link from "next/link";
 
 const NAVS = [
   {
@@ -24,30 +24,60 @@ const NAVS = [
 export const BottomNav = () => {
   const pathname = usePathname();
   const router = useRouter();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
+    if (e.key === "ArrowRight" || e.key === "ArrowLeft") {
+      const tabs = containerRef.current?.querySelectorAll("[data-nav-tab]");
+
+      if (tabs && tabs.length) {
+        const tabsArray = Array.from(tabs) as HTMLElement[];
+
+        const currentIndex = tabsArray.findIndex(
+          (tab) => tab === document.activeElement,
+        );
+
+        let nextIndex = 0;
+
+        if (e.key === "ArrowRight") {
+          nextIndex = (currentIndex + 1) % tabsArray.length;
+        } else if (e.key === "ArrowLeft") {
+          nextIndex = (currentIndex - 1 + tabsArray.length) % tabsArray.length;
+        }
+
+        tabsArray[nextIndex].focus();
+
+        // Optionally navigate to the focused tab's route.
+        const newTabValue = tabsArray[nextIndex].getAttribute("data-nav-value");
+        if (newTabValue) router.push(newTabValue);
+      }
+    }
+  };
 
   return (
     <div className="pointer-events-none sticky bottom-0 flex items-center justify-center py-4">
-      <Tabs
-        defaultValue="/search"
-        value={pathname}
-        onValueChange={(value) => router.push(value)}
-        className="pointer-events-auto"
-      >
-        <TabsList className="border border-neutral-300 shadow-sm">
+      <div className="pointer-events-auto">
+        <div
+          ref={containerRef}
+          onKeyDown={handleKeyDown}
+          className="flex h-auto items-center rounded-full border border-neutral-300 bg-neutral-200 p-1.5 text-foreground shadow-sm"
+        >
           {NAVS.map((tab) => {
             const Icon = tab.icon;
 
             return (
-              <Link prefetch href={tab.value} key={tab.value}>
-                <TabsTrigger
-                  value={tab.value}
-                  // onClick={() => setActiveTab(tab.value)}
+              <Link prefetch href={tab.value} key={tab.value} tabIndex={-1}>
+                <div
+                  data-nav-tab
+                  data-nav-value={tab.value}
+                  tabIndex={1}
+                  onFocus={() => router.push(tab.value)}
+                  onKeyDown={(e) => {}}
                   className={cn(
-                    "group text-brand-500",
+                    "group relative flex w-full cursor-pointer items-center justify-center rounded-full px-6 py-3 text-brand-500 transition duration-200 focus-visible:outline-0 md:px-8",
                     pathname === tab.value && "text-background",
                   )}
                 >
-                  {/* Active Tab BG */}
                   {pathname === tab.value ? (
                     <motion.div
                       layoutId="bet-history-tab-bg"
@@ -63,12 +93,12 @@ export const BottomNav = () => {
                   <div className="relative z-[30]">
                     <Icon size={20} strokeWidth={2.5} />
                   </div>
-                </TabsTrigger>
+                </div>
               </Link>
             );
           })}
-        </TabsList>
-      </Tabs>
+        </div>
+      </div>
     </div>
   );
 };
