@@ -27,6 +27,10 @@
   --color-brand-800: oklch(28.97% 0.122 260.5);
   --color-brand-900: oklch(19.39% 0.07 257.3);
   --color-brand-950: oklch(13.88% 0.041 251.63);
+
+  --color-unread-books: #dc2626;
+  --color-reading-books: var(--color-brand-500);
+  --color-read-books: #32cd32;
 }
 
 @utility container {
