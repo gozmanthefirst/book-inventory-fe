@@ -7,7 +7,7 @@ import { ReactNode } from "react";
 import QueryProvider from "@/providers/query-provider";
 import { ScreenSize } from "@/shared/components/screen-size";
 import { cn } from "@/shared/lib/utils/cn";
-import { epilogue } from "@/styles/fonts";
+import { geist } from "@/styles/fonts";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {
@@ -25,7 +25,7 @@ const RootLayout = async ({ children }: Props) => {
       <body
         className={cn(
           `bg-background text-foreground antialiased`,
-          epilogue.className,
+          geist.className,
         )}
       >
         <NuqsAdapter>
