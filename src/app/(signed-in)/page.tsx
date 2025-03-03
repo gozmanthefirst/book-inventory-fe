@@ -11,7 +11,7 @@ const HomePage = async () => {
   if (!user) {
     redirect("/sign-in");
   } else {
-    redirect("/search");
+    redirect("/my-books");
   }
 };
 
