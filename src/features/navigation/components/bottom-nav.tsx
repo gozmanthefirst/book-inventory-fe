@@ -84,7 +84,7 @@ export const BottomNav = () => {
                 >
                   {pathname === tab.value ? (
                     <motion.div
-                      layoutId="bet-history-tab-bg"
+                      layoutId="bottom-nav-tab-bg"
                       transition={{
                         type: "spring",
                         duration: 0.3,

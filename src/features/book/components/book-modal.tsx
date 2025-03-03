@@ -313,7 +313,7 @@ export const BookModal = ({
                             ? "bg-green-200 text-green-800"
                             : book.readStatus.toLowerCase() === "reading"
                               ? "bg-blue-200 text-blue-800"
-                              : "bg-neutral-400/50 text-neutral-950",
+                              : "bg-red-200 text-red-800",
                           geist.className,
                         )}
                       >
