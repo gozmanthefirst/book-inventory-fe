@@ -13,6 +13,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
 import { alegreya } from "@/styles/fonts";
+import { TbBooksOff, TbExclamationCircle } from "react-icons/tb";
 import { getMyBooks } from "../actions/get-my-books";
 
 export const MyBooks = () => {
@@ -45,7 +46,14 @@ export const MyBooks = () => {
       {isLoading ? (
         <BookListLoader />
       ) : isError ? (
-        <p className="text-red-500">Something went wrong!</p>
+        <div className="my-10 flex flex-col">
+          <div className="flex-1">
+            <div className="mx-auto flex aspect-square h-full max-h-[400px] flex-col items-center justify-center text-red-500">
+              <TbExclamationCircle size={144} strokeWidth={1.5} className="" />
+              <p className={cn("text-xl")}>No added books</p>
+            </div>
+          </div>
+        </div>
       ) : Array.isArray(myBooks) && myBooks.length > 0 ? (
         <ul className="flex w-full flex-col">
           {myBooks.map((complexBook) => {
@@ -62,7 +70,14 @@ export const MyBooks = () => {
           })}
         </ul>
       ) : (
-        <p className="text-neutral-500">No books found</p>
+        <div className="my-10 flex flex-col">
+          <div className="flex-1">
+            <div className="mx-auto flex aspect-square h-full max-h-[400px] flex-col items-center justify-center text-neutral-400">
+              <TbBooksOff size={144} strokeWidth={1.5} className="" />
+              <p className={cn("text-xl")}>No added books</p>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* Book Modal */}

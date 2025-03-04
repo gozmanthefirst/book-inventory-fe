@@ -15,6 +15,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { alegreya } from "@/styles/fonts";
 import { useMemo } from "react";
+import { TbChartPieOff } from "react-icons/tb";
 import { Label, Pie, PieChart } from "recharts";
 
 const chartConfig = {
@@ -118,56 +119,69 @@ export const Portfolio = () => {
       </div>
 
       {/* Chart */}
-      <div className="flex-colmy-10 flex">
+      <div className="my-10 flex flex-col">
         <div className="flex-1">
-          <ChartContainer
-            config={chartConfig}
-            className="mx-auto aspect-square max-h-[400px]"
-          >
-            <PieChart>
-              <ChartTooltip
-                cursor={false}
-                content={<ChartTooltipContent hideLabel />}
-              />
-              <Pie
-                data={booksData}
-                dataKey="books"
-                nameKey="status"
-                innerRadius={64}
-                strokeWidth={5}
-              >
-                <Label
-                  content={({ viewBox }) => {
-                    if (viewBox && "cx" in viewBox && "cy" in viewBox) {
-                      return (
-                        <text
-                          x={viewBox.cx}
-                          y={viewBox.cy}
-                          textAnchor="middle"
-                          dominantBaseline="middle"
-                        >
-                          <tspan
+          {myBooks?.length ? (
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square max-h-[400px]"
+            >
+              <PieChart>
+                <ChartTooltip
+                  cursor={false}
+                  content={<ChartTooltipContent hideLabel />}
+                />
+                <Pie
+                  data={booksData}
+                  dataKey="books"
+                  nameKey="status"
+                  innerRadius={64}
+                  strokeWidth={5}
+                >
+                  <Label
+                    content={({ viewBox }) => {
+                      if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                        return (
+                          <text
                             x={viewBox.cx}
                             y={viewBox.cy}
-                            className="fill-neutral-600 text-4xl font-bold"
+                            textAnchor="middle"
+                            dominantBaseline="middle"
                           >
-                            {totalBooks.toLocaleString()}
-                          </tspan>
-                          <tspan
-                            x={viewBox.cx}
-                            y={(viewBox.cy || 0) + 24}
-                            className="fill-neutral-600 text-sm"
-                          >
-                            Books
-                          </tspan>
-                        </text>
-                      );
-                    }
-                  }}
-                />
-              </Pie>
-            </PieChart>
-          </ChartContainer>
+                            <tspan
+                              x={viewBox.cx}
+                              y={viewBox.cy}
+                              className="fill-neutral-600 text-4xl font-bold"
+                            >
+                              {totalBooks.toLocaleString()}
+                            </tspan>
+                            <tspan
+                              x={viewBox.cx}
+                              y={(viewBox.cy || 0) + 24}
+                              className="fill-neutral-600 text-sm"
+                            >
+                              Books
+                            </tspan>
+                          </text>
+                        );
+                      }
+                    }}
+                  />
+                </Pie>
+              </PieChart>
+            </ChartContainer>
+          ) : (
+            <div className="mx-auto flex aspect-square h-full max-h-[400px] flex-col items-center justify-center">
+              <TbChartPieOff
+                size={144}
+                strokeWidth={1.5}
+                className="text-neutral-400"
+              />
+              <p className={cn("text-xl text-neutral-400")}>
+                Insufficient data
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>
