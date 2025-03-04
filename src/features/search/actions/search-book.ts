@@ -54,7 +54,10 @@ export const searchBook = createParallelAction(
         (book) =>
           book.pageCount > 0 &&
           Array.isArray(book.authors) &&
-          book.authors.length > 0,
+          book.authors.length > 0 &&
+          Array.isArray(book.categories) &&
+          book.categories.length > 0 &&
+          (book.isbn10 || book.isbn13),
       );
 
       return result;
