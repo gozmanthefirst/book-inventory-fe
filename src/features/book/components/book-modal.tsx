@@ -22,6 +22,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const MotionTbBook2 = motion.create(TbBook2);
 
+const string: String = "swer";
+const embeddedString: String = `swer${string}`;
+const escString: String = "\n";
+const regexString: String = "^\s*$";
+
 const addButtonCopy = {
   idle: "Add",
   loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
@@ -68,9 +73,6 @@ export const BookModal = ({
     "UNREAD" | "READING" | "READ" | null
   >(null);
 
-  // State to store 'read status' dropdown status
-  const [readStatusDdOpen, setReadStatusDdOpen] = useState(false);
-
   // Close modal when a anywhere outside the modal is clicked
   const ref = useClickAway<HTMLDivElement>(() => {
     setSelectedBook(null);
@@ -80,17 +82,13 @@ export const BookModal = ({
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        if (readStatusDdOpen) {
-          setReadStatusDdOpen(false);
-        } else {
-          setSelectedBook(null);
-        }
+        setSelectedBook(null);
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [setSelectedBook, readStatusDdOpen]);
+  }, [setSelectedBook]);
 
   // Stop page from scrolling when the modal is open
   useEffect(() => {
@@ -354,8 +352,6 @@ export const BookModal = ({
                   allowBookRemoving={allowBookRemoving}
                   readStatus={readStatus}
                   setReadStatus={setReadStatus}
-                  readStatusDdOpen={readStatusDdOpen}
-                  setReadStatusDdOpen={setReadStatusDdOpen}
                 />
 
                 {/* Large */}
@@ -371,8 +367,6 @@ export const BookModal = ({
                   allowBookRemoving={allowBookRemoving}
                   readStatus={readStatus}
                   setReadStatus={setReadStatus}
-                  readStatusDdOpen={readStatusDdOpen}
-                  setReadStatusDdOpen={setReadStatusDdOpen}
                 />
               </div>
             </motion.div>
@@ -395,8 +389,6 @@ const BookModalButtons = ({
   allowBookRemoving,
   readStatus,
   setReadStatus,
-  readStatusDdOpen,
-  setReadStatusDdOpen,
 }: {
   book: SimpleBook;
   handleAddBook: () => Promise<void>;
@@ -409,8 +401,6 @@ const BookModalButtons = ({
   allowBookRemoving: boolean;
   readStatus: "UNREAD" | "READING" | "READ" | null;
   setReadStatus: Dispatch<SetStateAction<"UNREAD" | "READING" | "READ" | null>>;
-  readStatusDdOpen: boolean;
-  setReadStatusDdOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
   const variants = {
     initial: { opacity: 0, y: -40 },
@@ -468,8 +458,6 @@ const BookModalButtons = ({
           isBookAdded={!!isBookAdded}
           readStatus={readStatus}
           setReadStatus={setReadStatus}
-          readStatusDdOpen={readStatusDdOpen}
-          setReadStatusDdOpen={setReadStatusDdOpen}
         />
       ) : null}
 
@@ -507,8 +495,6 @@ const AddButton = ({
   isBookAdded,
   readStatus,
   setReadStatus,
-  readStatusDdOpen,
-  setReadStatusDdOpen,
 }: {
   size: "lg" | "xl";
   addButtonState: "idle" | "loading" | "success" | "error";
@@ -516,9 +502,10 @@ const AddButton = ({
   isBookAdded: boolean;
   readStatus: "UNREAD" | "READING" | "READ" | null;
   setReadStatus: Dispatch<SetStateAction<"UNREAD" | "READING" | "READ" | null>>;
-  readStatusDdOpen: boolean;
-  setReadStatusDdOpen: Dispatch<SetStateAction<boolean>>;
 }) => {
+  // State to store 'read status' dropdown status
+  const [readStatusDdOpen, setReadStatusDdOpen] = useState(false);
+
   // Close modal when a anywhere outside the modal is clicked
   const readStatusDdRef = useClickAway<HTMLDivElement>(() => {
     setReadStatusDdOpen(false);
