@@ -218,7 +218,7 @@ export const BookModal = ({
           />
 
           {/* Selected Book */}
-          <div className="fixed inset-0 isolate z-50 grid place-items-center px-2">
+          <div className="fixed inset-0 z-50 grid place-items-center px-2">
             <motion.div
               ref={ref}
               layoutId={`book-${book.id}`}
@@ -238,7 +238,7 @@ export const BookModal = ({
                     duration: 0.5,
                     bounce: 0.2,
                   }}
-                  className="relative z-5 aspect-2/3 h-60 self-start shadow-md sm:h-70 smd:h-88 md:h-full"
+                  className="relative aspect-2/3 h-60 self-start shadow-md sm:h-70 smd:h-88 md:h-full"
                 >
                   <div className="absolute inset-0 flex items-center justify-center bg-[#e1d8cf] text-neutral-400">
                     <MotionTbBook2
@@ -531,6 +531,7 @@ const AddButton = ({
         <div className="absolute inset-0 cursor-pointer rounded-2xl" />
       ) : null}
 
+      {/* Read Status Dropdown */}
       <AnimatePresence initial={false}>
         {readStatusDdOpen ? (
           <motion.div
@@ -559,7 +560,7 @@ const AddButton = ({
               bounce: 0.2,
             }}
             className={cn(
-              "absolute right-0 bottom-[calc(100%_+_0.5rem)] left-0 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
+              "absolute right-0 bottom-[calc(100%_+_0.5rem)] left-0 z-5 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
             )}
           >
             {["UNREAD", "READING", "READ"].map((option) => (
@@ -578,6 +579,7 @@ const AddButton = ({
                 onMouseEnter={() =>
                   setReadStatus(option as "UNREAD" | "READING" | "READ")
                 }
+                onMouseLeave={() => setReadStatus(null)}
                 className={cn(
                   "group relative flex h-10 cursor-pointer items-center justify-center bg-transparent font-semibold text-brand-500 transition duration-200 focus-visible:outline-0 md:h-12",
                   option === readStatus || (!readStatus && option === "UNREAD")

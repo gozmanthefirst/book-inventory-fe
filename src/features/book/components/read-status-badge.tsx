@@ -99,7 +99,7 @@ export const ReadStatusBadge = ({
   };
 
   return (
-    <div className="relative flex items-center gap-1">
+    <div className="relative flex items-center gap-1 self-start">
       {/* Read status */}
       <motion.div
         layoutId={`${layoutId}-${book.id}`}
@@ -130,9 +130,6 @@ export const ReadStatusBadge = ({
         <TbCircleCheck className="text-green-600" />
       ) : null}
 
-      {/* To prevent the dropdown from opening again if it's currently and the trigger is pressed to close it */}
-      {readStatusDdOpen ? <div className="absolute inset-0 z-5" /> : null}
-
       <AnimatePresence initial={false}>
         {readStatusDdOpen ? (
           <motion.div
@@ -161,7 +158,7 @@ export const ReadStatusBadge = ({
               bounce: 0.2,
             }}
             className={cn(
-              "absolute top-[calc(100%_+_0.5rem)] left-0 z-10 w-64 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
+              "absolute top-[calc(100%_+_0.5rem)] left-0 z-5 w-64 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
             )}
           >
             {["UNREAD", "READING", "READ"].map((option) => (
