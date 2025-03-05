@@ -1,6 +1,7 @@
 "use client";
 
 // External Imports
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useClickAway } from "@uidotdev/usehooks";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
@@ -9,6 +10,7 @@ import { TbBook2 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
 // Local Imports
+import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
 import { addBook } from "@/features/my-books/actions/add-book";
 import { getMyBooks } from "@/features/my-books/actions/get-my-books";
 import { removeBook } from "@/features/my-books/actions/remove-book";
@@ -17,15 +19,9 @@ import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
 import { ServerActionResponse } from "@/shared/types/shared-types";
-import { alegreya, geist } from "@/styles/fonts";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { alegreya } from "@/styles/fonts";
 
 const MotionTbBook2 = motion.create(TbBook2);
-
-const string: String = "swer";
-const embeddedString: String = `swer${string}`;
-const escString: String = "\n";
-const regexString: String = "^\s*$";
 
 const addButtonCopy = {
   idle: "Add",
@@ -222,7 +218,7 @@ export const BookModal = ({
           />
 
           {/* Selected Book */}
-          <div className="fixed inset-0 z-50 grid place-items-center px-2">
+          <div className="fixed inset-0 isolate z-50 grid place-items-center px-2">
             <motion.div
               ref={ref}
               layoutId={`book-${book.id}`}
@@ -242,7 +238,7 @@ export const BookModal = ({
                     duration: 0.5,
                     bounce: 0.2,
                   }}
-                  className="relative z-65 aspect-2/3 h-60 self-start shadow-md sm:h-70 smd:h-88 md:h-full"
+                  className="relative z-5 aspect-2/3 h-60 self-start shadow-md sm:h-70 smd:h-88 md:h-full"
                 >
                   <div className="absolute inset-0 flex items-center justify-center bg-[#e1d8cf] text-neutral-400">
                     <MotionTbBook2
@@ -298,25 +294,12 @@ export const BookModal = ({
                     </motion.p>
 
                     {showReadStatus ? (
-                      <motion.div
-                        layoutId={`book-read-status-${book.id}`}
-                        transition={{
-                          type: "spring",
-                          duration: 0.5,
-                          bounce: 0.2,
-                        }}
-                        className={cn(
-                          "self-start rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                          book.readStatus.toLowerCase() === "read"
-                            ? "bg-green-200 text-green-800"
-                            : book.readStatus.toLowerCase() === "reading"
-                              ? "bg-blue-200 text-blue-800"
-                              : "bg-red-200 text-red-800",
-                          geist.className,
-                        )}
-                      >
-                        {book.readStatus}
-                      </motion.div>
+                      <ReadStatusBadge
+                        layoutId="book-read-status"
+                        book={book}
+                        showChangeIcon
+                        setSelectedBook={setSelectedBook}
+                      />
                     ) : null}
                   </div>
 
@@ -543,6 +526,7 @@ const AddButton = ({
         </AnimatePresence>
       </Button>
 
+      {/* To prevent the dropdown from opening again if it's currently and the trigger is pressed to close it */}
       {readStatusDdOpen ? (
         <div className="absolute inset-0 cursor-pointer rounded-2xl" />
       ) : null}

@@ -7,6 +7,7 @@ import { Dispatch, SetStateAction } from "react";
 import { TbBook2 } from "react-icons/tb";
 
 // Local Imports
+import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
 import { cn } from "@/shared/lib/utils/cn";
 import { SimpleBook } from "@/shared/types/google-book";
 import { alegreya } from "@/styles/fonts";
@@ -97,24 +98,7 @@ export const SingleBook = ({
           </motion.p>
 
           {showReadStatus ? (
-            <motion.div
-              layoutId={`book-read-status-${book.id}`}
-              transition={{
-                type: "spring",
-                duration: 0.5,
-                bounce: 0.2,
-              }}
-              className={cn(
-                "self-start rounded-full px-2 py-0.5 text-[10px] font-semibold",
-                book.readStatus.toLowerCase() === "read"
-                  ? "bg-green-200 text-green-800"
-                  : book.readStatus.toLowerCase() === "reading"
-                    ? "bg-blue-200 text-blue-800"
-                    : "bg-red-200 text-red-800",
-              )}
-            >
-              {book.readStatus}
-            </motion.div>
+            <ReadStatusBadge layoutId="book-read-status" book={book} />
           ) : null}
 
           {/* Description */}
