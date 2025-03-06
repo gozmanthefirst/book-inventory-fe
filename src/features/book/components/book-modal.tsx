@@ -2,10 +2,17 @@
 
 // External Imports
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useStore } from "@tanstack/react-store";
 import { useClickAway } from "@uidotdev/usehooks";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { TbBook2 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
@@ -17,11 +24,24 @@ import { removeBook } from "@/features/my-books/actions/remove-book";
 import { Button } from "@/shared/components/button";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
+import { readStatusDdStore } from "@/shared/store";
 import { SimpleBook } from "@/shared/types/google-book";
 import { ServerActionResponse } from "@/shared/types/shared-types";
 import { alegreya } from "@/styles/fonts";
 
 const MotionTbBook2 = motion.create(TbBook2);
+
+// Read status types
+type ReadStatus = "UNREAD" | "READING" | "READ";
+
+// States object to store add button states for each book by ID
+type ButtonAction = "add" | "remove";
+type ButtonState = "idle" | "loading" | "success" | "error";
+interface ButtonStates {
+  [bookId: string]: {
+    [action in ButtonAction]?: ButtonState;
+  };
+}
 
 const addButtonCopy = {
   idle: "Add",
@@ -50,29 +70,22 @@ export const BookModal = ({
   allowBookRemoving?: boolean;
   showReadStatus?: boolean;
 }) => {
-  // States object to store add button states for each book by ID
-  const [addButtonStates, setAddButtonStates] = useState<
-    Record<string, "idle" | "loading" | "success" | "error">
-  >({});
-  const addButtonState = book ? addButtonStates[book.id] || "idle" : "idle";
+  // State to store 'read status' dropdown status
+  const readStatusDdOpen = useStore(readStatusDdStore);
 
-  // States object to store remove button states for each book by ID
-  const [removeButtonStates, setRemoveButtonStates] = useState<
-    Record<string, "idle" | "loading" | "success" | "error">
-  >({});
-  const removeButtonState = book
-    ? removeButtonStates[book.id] || "idle"
-    : "idle";
-
-  // State to store chosen read status
-  const [readStatus, setReadStatus] = useState<
-    "UNREAD" | "READING" | "READ" | null
-  >(null);
+  const [buttonStates, setButtonStates] = useState<ButtonStates>({});
 
   // Close modal when a anywhere outside the modal is clicked
   const ref = useClickAway<HTMLDivElement>(() => {
     setSelectedBook(null);
   });
+
+  // Clear button states when component unmounts
+  useEffect(() => {
+    return () => {
+      setButtonStates({});
+    };
+  }, []);
 
   // Close modal when the `esc` key is pressed
   useEffect(() => {
@@ -100,53 +113,57 @@ export const BookModal = ({
 
   const queryClient = useQueryClient();
 
+  const updateButtonState = useCallback(
+    (bookId: string, action: ButtonAction, state: ButtonState) => {
+      setButtonStates((prev) => ({
+        ...prev,
+        [bookId]: {
+          ...prev[bookId],
+          [action]: state,
+        },
+      }));
+    },
+    [],
+  );
+
   // Function to add book
-  const handleAddBook = async () => {
+  const handleAddBook = async (readStatus: ReadStatus) => {
     if (!book) return;
 
+    const bookId = book.id;
+
     try {
-      setAddButtonStates((prev) => ({
-        ...prev,
-        [book.id]: "loading",
-      }));
+      updateButtonState(bookId, "add", "loading");
 
       const response: ServerActionResponse = await addBook({
         ...book,
-        readStatus: readStatus || "UNREAD",
+        readStatus,
       });
 
       if (response.status === "error") {
-        return setAddButtonStates((prev) => ({
-          ...prev,
-          [book.id]: "error",
-        }));
+        updateButtonState(bookId, "add", "error");
+        return;
       }
 
-      queryClient.invalidateQueries({
+      await queryClient.invalidateQueries({
         queryKey: ["my-books"],
       });
-      setAddButtonStates((prev) => ({
-        ...prev,
-        [book.id]: "success",
-      }));
-      setTimeout(() => {
+      updateButtonState(bookId, "add", "success");
+
+      const timeoutId = setTimeout(() => {
         setSelectedBook(null);
       }, 800);
+
+      return () => clearTimeout(timeoutId);
     } catch (error) {
       if (process.env.NODE_ENV !== "production") {
         console.error(error);
       }
 
-      setAddButtonStates((prev) => ({
-        ...prev,
-        [book.id]: "error",
-      }));
+      updateButtonState(bookId, "add", "error");
     } finally {
       setTimeout(() => {
-        setAddButtonStates((prev) => ({
-          ...prev,
-          [book.id]: "idle",
-        }));
+        updateButtonState(bookId, "add", "idle");
       }, 3000);
     }
   };
@@ -155,26 +172,20 @@ export const BookModal = ({
   const handleRemoveBook = async () => {
     if (!book) return;
 
+    const bookId = book.id;
+
     try {
-      setRemoveButtonStates((prev) => ({
-        ...prev,
-        [book.id]: "loading",
-      }));
+      updateButtonState(bookId, "remove", "loading");
 
       const response: ServerActionResponse = await removeBook(book);
 
       if (response.status === "error") {
-        return setRemoveButtonStates((prev) => ({
-          ...prev,
-          [book.id]: "error",
-        }));
+        updateButtonState(bookId, "remove", "error");
+        return;
       }
 
       setSelectedBook(null);
-      setRemoveButtonStates((prev) => ({
-        ...prev,
-        [book.id]: "success",
-      }));
+      updateButtonState(bookId, "remove", "success");
 
       setTimeout(() => {
         queryClient.invalidateQueries({
@@ -186,16 +197,10 @@ export const BookModal = ({
         console.error(error);
       }
 
-      setRemoveButtonStates((prev) => ({
-        ...prev,
-        [book.id]: "error",
-      }));
+      updateButtonState(bookId, "remove", "error");
     } finally {
       setTimeout(() => {
-        setRemoveButtonStates((prev) => ({
-          ...prev,
-          [book.id]: "idle",
-        }));
+        updateButtonState(bookId, "remove", "idle");
       }, 3000);
     }
   };
@@ -297,7 +302,7 @@ export const BookModal = ({
                       <ReadStatusBadge
                         layoutId="book-read-status"
                         book={book}
-                        showChangeIcon
+                        selectedBook={book}
                         setSelectedBook={setSelectedBook}
                       />
                     ) : null}
@@ -329,12 +334,9 @@ export const BookModal = ({
                   handleRemoveBook={handleRemoveBook}
                   setSelectedBook={setSelectedBook}
                   size="lg"
-                  addButtonState={addButtonState}
-                  removeButtonState={removeButtonState}
+                  buttonStates={buttonStates}
                   allowBookAdding={allowBookAdding}
                   allowBookRemoving={allowBookRemoving}
-                  readStatus={readStatus}
-                  setReadStatus={setReadStatus}
                 />
 
                 {/* Large */}
@@ -344,12 +346,9 @@ export const BookModal = ({
                   handleRemoveBook={handleRemoveBook}
                   setSelectedBook={setSelectedBook}
                   size="xl"
-                  addButtonState={addButtonState}
-                  removeButtonState={removeButtonState}
+                  buttonStates={buttonStates}
                   allowBookAdding={allowBookAdding}
                   allowBookRemoving={allowBookRemoving}
-                  readStatus={readStatus}
-                  setReadStatus={setReadStatus}
                 />
               </div>
             </motion.div>
@@ -366,25 +365,22 @@ const BookModalButtons = ({
   handleRemoveBook,
   setSelectedBook,
   size,
-  addButtonState,
-  removeButtonState,
+  buttonStates,
   allowBookAdding,
   allowBookRemoving,
-  readStatus,
-  setReadStatus,
 }: {
   book: SimpleBook;
-  handleAddBook: () => Promise<void>;
+  handleAddBook: (readStatus: ReadStatus) => Promise<(() => void) | undefined>;
   handleRemoveBook: () => Promise<void>;
   setSelectedBook: Dispatch<SetStateAction<SimpleBook | null>>;
   size: "lg" | "xl";
-  addButtonState: "idle" | "loading" | "success" | "error";
-  removeButtonState: "idle" | "loading" | "success" | "error";
+  buttonStates: ButtonStates;
   allowBookAdding: boolean;
   allowBookRemoving: boolean;
-  readStatus: "UNREAD" | "READING" | "READ" | null;
-  setReadStatus: Dispatch<SetStateAction<"UNREAD" | "READING" | "READ" | null>>;
 }) => {
+  const addButtonState = buttonStates[book.id]?.add || "idle";
+  const removeButtonState = buttonStates[book.id]?.remove || "idle";
+
   const variants = {
     initial: { opacity: 0, y: -40 },
     visible: { opacity: 1, y: 0 },
@@ -436,11 +432,9 @@ const BookModalButtons = ({
       {allowBookAdding ? (
         <AddButton
           size={size}
-          addButtonState={addButtonState}
+          buttonState={addButtonState}
           handleAddBook={handleAddBook}
           isBookAdded={!!isBookAdded}
-          readStatus={readStatus}
-          setReadStatus={setReadStatus}
         />
       ) : null}
 
@@ -470,28 +464,23 @@ const BookModalButtons = ({
     </motion.div>
   );
 };
-
 const AddButton = ({
   size,
-  addButtonState,
+  buttonState,
   handleAddBook,
   isBookAdded,
-  readStatus,
-  setReadStatus,
 }: {
   size: "lg" | "xl";
-  addButtonState: "idle" | "loading" | "success" | "error";
-  handleAddBook: () => Promise<void>;
+  buttonState: ButtonState;
+  handleAddBook: (readStatus: ReadStatus) => Promise<(() => void) | undefined>;
   isBookAdded: boolean;
-  readStatus: "UNREAD" | "READING" | "READ" | null;
-  setReadStatus: Dispatch<SetStateAction<"UNREAD" | "READING" | "READ" | null>>;
 }) => {
   // State to store 'read status' dropdown status
-  const [readStatusDdOpen, setReadStatusDdOpen] = useState(false);
+  const readStatusDdOpen = useStore(readStatusDdStore);
 
   // Close modal when a anywhere outside the modal is clicked
   const readStatusDdRef = useClickAway<HTMLDivElement>(() => {
-    setReadStatusDdOpen(false);
+    readStatusDdStore.setState(() => false);
   });
 
   const variants = {
@@ -504,32 +493,27 @@ const AddButton = ({
     <div className="relative w-full">
       <Button
         size={size}
-        variant={addButtonState === "error" ? "destructive" : "brand"}
+        variant={buttonState === "error" ? "destructive" : "brand"}
         type="button"
-        onClick={() => setReadStatusDdOpen((o) => !o)}
-        disabled={addButtonState !== "idle" || isBookAdded}
+        onClick={() => readStatusDdStore.setState(() => true)}
+        disabled={buttonState !== "idle" || isBookAdded}
         className="relative w-full gap-2 overflow-hidden lg:hover:bg-brand-500"
       >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div
-            key={addButtonState}
+            key={buttonState}
             transition={{ type: "spring", bounce: 0, duration: 0.3 }}
             initial="initial"
             animate="visible"
             exit="exit"
             variants={variants}
           >
-            {isBookAdded && addButtonState === "idle"
+            {isBookAdded && buttonState === "idle"
               ? "Added"
-              : addButtonCopy[addButtonState]}
+              : addButtonCopy[buttonState]}
           </motion.div>
         </AnimatePresence>
       </Button>
-
-      {/* To prevent the dropdown from opening again if it's currently and the trigger is pressed to close it */}
-      {readStatusDdOpen ? (
-        <div className="absolute inset-0 cursor-pointer rounded-2xl" />
-      ) : null}
 
       {/* Read Status Dropdown */}
       <AnimatePresence initial={false}>
@@ -560,46 +544,22 @@ const AddButton = ({
               bounce: 0.2,
             }}
             className={cn(
-              "absolute right-0 bottom-[calc(100%_+_0.5rem)] left-0 z-5 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
+              "absolute right-0 bottom-[calc(100%_+_0.5rem)] left-0 z-50 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
             )}
           >
             {["UNREAD", "READING", "READ"].map((option) => (
               <motion.div
                 key={option.toLowerCase()}
-                onClick={() => {
-                  setReadStatus(option as "UNREAD" | "READING" | "READ");
-                  setReadStatusDdOpen((o) => !o);
-                  handleAddBook();
-                  setReadStatus(null);
+                onClick={async () => {
+                  readStatusDdStore.setState(() => false);
+                  await handleAddBook(option as ReadStatus);
                 }}
                 tabIndex={1}
-                onFocus={() =>
-                  setReadStatus(option as "UNREAD" | "READING" | "READ")
-                }
-                onMouseEnter={() =>
-                  setReadStatus(option as "UNREAD" | "READING" | "READ")
-                }
-                onMouseLeave={() => setReadStatus(null)}
                 className={cn(
-                  "group relative flex h-10 cursor-pointer items-center justify-center bg-transparent font-semibold text-brand-500 transition duration-200 focus-visible:outline-0 md:h-12",
-                  option === readStatus || (!readStatus && option === "UNREAD")
-                    ? "text-background"
-                    : "",
+                  "relative flex h-10 cursor-pointer items-center justify-center rounded-xl bg-inherit font-semibold text-brand-500 transition duration-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand-500 lg:hover:bg-brand-500 lg:hover:text-background",
                 )}
               >
-                {option === readStatus ||
-                (!readStatus && option === "UNREAD") ? (
-                  <motion.div
-                    layoutId="option-bg"
-                    transition={{
-                      type: "spring",
-                      duration: 0.3,
-                      bounce: 0.2,
-                    }}
-                    className="absolute inset-0 rounded-xl bg-brand-500 group-focus-visible:outline-2 group-focus-visible:outline-offset-2 group-focus-visible:outline-brand-500"
-                  />
-                ) : null}
-                <div className="relative">{option}</div>
+                {option}
               </motion.div>
             ))}
           </motion.div>
