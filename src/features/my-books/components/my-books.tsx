@@ -3,6 +3,7 @@
 // External Imports
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { TbBooksOff, TbExclamationCircle } from "react-icons/tb";
 
 // Local Imports
 import { BookListLoader } from "@/features/book/components/book-list-loader";
@@ -13,7 +14,6 @@ import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
 import { alegreya } from "@/styles/fonts";
-import { TbBooksOff, TbExclamationCircle } from "react-icons/tb";
 import { getMyBooks } from "../actions/get-my-books";
 
 export const MyBooks = () => {
@@ -56,18 +56,24 @@ export const MyBooks = () => {
         </div>
       ) : Array.isArray(myBooks) && myBooks.length > 0 ? (
         <ul className="flex w-full flex-col">
-          {myBooks.map((complexBook) => {
-            const simpleBook = complexBookToSimpleBook(complexBook);
+          {[...myBooks]
+            .sort(
+              (a, b) =>
+                new Date(b.createdAt).getTime() -
+                new Date(a.createdAt).getTime(),
+            )
+            .map((complexBook) => {
+              const simpleBook = complexBookToSimpleBook(complexBook);
 
-            return (
-              <SingleBook
-                key={simpleBook.id}
-                book={simpleBook}
-                setSelectedBook={setSelectedBook}
-                showReadStatus
-              />
-            );
-          })}
+              return (
+                <SingleBook
+                  key={simpleBook.id}
+                  book={simpleBook}
+                  setSelectedBook={setSelectedBook}
+                  showReadStatus
+                />
+              );
+            })}
         </ul>
       ) : (
         <div className="my-10 flex flex-col">
