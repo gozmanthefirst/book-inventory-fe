@@ -21,12 +21,12 @@ type ReadStatus = "UNREAD" | "READING" | "READ";
 export const ReadStatusBadge = ({
   book,
   layoutId,
-  selectedBook,
+  showDdOnClick,
   setSelectedBook,
 }: {
   book: SimpleBook;
   layoutId: string;
-  selectedBook?: SimpleBook | null;
+  showDdOnClick?: boolean;
   setSelectedBook?: Dispatch<SetStateAction<SimpleBook | null>>;
 }) => {
   // States object to store update icon states for each book by ID
@@ -35,11 +35,15 @@ export const ReadStatusBadge = ({
   >({});
   const updateIconState = book ? updateIconStates[book.id] || "idle" : "idle";
 
-  // State to store 'read status' dropdown status
+  // Add local state for this specific badge's dropdown
+  const [localDropdownOpen, setLocalDropdownOpen] = useState(false);
+
+  // Get global state for modal overlay
   const readStatusDdOpen = useStore(readStatusDdStore);
 
   // Close modal when a anywhere outside the modal is clicked
   const readStatusDdRef = useClickAway<HTMLDivElement>(() => {
+    setLocalDropdownOpen(false);
     readStatusDdStore.setState(() => false);
   });
 
@@ -108,7 +112,10 @@ export const ReadStatusBadge = ({
         <motion.div
           layoutId={`${layoutId}-${book.id}`}
           onClick={() => {
-            readStatusDdStore.setState(() => true);
+            if (showDdOnClick) {
+              setLocalDropdownOpen(true);
+              readStatusDdStore.setState(() => true);
+            }
           }}
           transition={{
             type: "spring",
@@ -138,7 +145,7 @@ export const ReadStatusBadge = ({
 
         {/* Read Status Dropdown */}
         <AnimatePresence initial={false}>
-          {readStatusDdOpen ? (
+          {localDropdownOpen ? (
             <motion.div
               ref={readStatusDdRef}
               initial={{
@@ -165,13 +172,14 @@ export const ReadStatusBadge = ({
                 bounce: 0.2,
               }}
               className={cn(
-                "absolute top-[calc(100%_+_0.5rem)] left-0 z-5 w-64 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
+                "absolute top-[calc(100%_+_0.5rem)] left-0 z-[52] w-64 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
               )}
             >
               {["UNREAD", "READING", "READ"].map((option) => (
                 <motion.div
                   key={option.toLowerCase()}
                   onClick={async () => {
+                    setLocalDropdownOpen(false);
                     readStatusDdStore.setState(() => false);
                     handleUpdateBook(option as ReadStatus);
                   }}
