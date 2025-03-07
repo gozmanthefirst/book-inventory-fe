@@ -232,8 +232,9 @@ export const BookModal = ({
                 duration: 0.5,
                 bounce: 0.2,
               }}
-              className="group relative flex max-h-[95dvh] w-full max-w-4xl flex-col gap-4 overflow-auto border-neutral-300 bg-background p-4 shadow-md md:p-6"
+              className="relative flex max-h-[95dvh] w-full max-w-4xl flex-col gap-4 overflow-auto border-neutral-300 bg-background p-4 shadow-md md:p-6"
             >
+              {/* Modal Contents */}
               <div className="flex w-full flex-col gap-4 smd:gap-4 md:h-80 md:flex-row">
                 {/* Book image */}
                 <motion.div
@@ -302,7 +303,7 @@ export const BookModal = ({
                       <ReadStatusBadge
                         layoutId="book-read-status"
                         book={book}
-                        selectedBook={book}
+                        showDdOnClick
                         setSelectedBook={setSelectedBook}
                       />
                     ) : null}
@@ -325,8 +326,44 @@ export const BookModal = ({
                 </div>
               </div>
 
+              {/* Modal Overlay to cover the rest  */}
+              <AnimatePresence>
+                {readStatusDdOpen ? (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{
+                      type: "spring",
+                      duration: 0.5,
+                      bounce: 0.2,
+                    }}
+                    className="absolute inset-0"
+                    onClick={() => readStatusDdStore.setState(() => false)}
+                  />
+                ) : null}
+              </AnimatePresence>
+
               {/* Buttons */}
               <div className="sticky bottom-0 bg-background">
+                {/* Modal Overlay (to cover the bottom buttons) */}
+                <AnimatePresence>
+                  {readStatusDdOpen ? (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      transition={{
+                        type: "spring",
+                        duration: 0.5,
+                        bounce: 0.2,
+                      }}
+                      className="absolute inset-0 z-55"
+                      onClick={() => readStatusDdStore.setState(() => false)}
+                    />
+                  ) : null}
+                </AnimatePresence>
+
                 {/* Small */}
                 <BookModalButtons
                   book={book}
@@ -475,11 +512,14 @@ const AddButton = ({
   handleAddBook: (readStatus: ReadStatus) => Promise<(() => void) | undefined>;
   isBookAdded: boolean;
 }) => {
-  // State to store 'read status' dropdown status
+  // Add local state
+  const [localDropdownOpen, setLocalDropdownOpen] = useState(false);
+
+  // Keep global state for modal overlay
   const readStatusDdOpen = useStore(readStatusDdStore);
 
-  // Close modal when a anywhere outside the modal is clicked
   const readStatusDdRef = useClickAway<HTMLDivElement>(() => {
+    setLocalDropdownOpen(false);
     readStatusDdStore.setState(() => false);
   });
 
@@ -495,7 +535,10 @@ const AddButton = ({
         size={size}
         variant={buttonState === "error" ? "destructive" : "brand"}
         type="button"
-        onClick={() => readStatusDdStore.setState(() => true)}
+        onClick={() => {
+          setLocalDropdownOpen(true);
+          readStatusDdStore.setState(() => true);
+        }}
         disabled={buttonState !== "idle" || isBookAdded}
         className="relative w-full gap-2 overflow-hidden lg:hover:bg-brand-500"
       >
@@ -517,7 +560,7 @@ const AddButton = ({
 
       {/* Read Status Dropdown */}
       <AnimatePresence initial={false}>
-        {readStatusDdOpen ? (
+        {localDropdownOpen ? (
           <motion.div
             ref={readStatusDdRef}
             initial={{
@@ -544,13 +587,14 @@ const AddButton = ({
               bounce: 0.2,
             }}
             className={cn(
-              "absolute right-0 bottom-[calc(100%_+_0.5rem)] left-0 z-50 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
+              "absolute right-0 bottom-[calc(100%_+_0.5rem)] left-0 z-55 rounded-3xl border border-neutral-300 bg-neutral-200 p-3 text-sm text-brand-500 shadow-sm",
             )}
           >
             {["UNREAD", "READING", "READ"].map((option) => (
               <motion.div
                 key={option.toLowerCase()}
                 onClick={async () => {
+                  setLocalDropdownOpen(false);
                   readStatusDdStore.setState(() => false);
                   await handleAddBook(option as ReadStatus);
                 }}
