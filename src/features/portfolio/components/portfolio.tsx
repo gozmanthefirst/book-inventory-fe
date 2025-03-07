@@ -2,6 +2,14 @@
 
 // External Imports
 import { useQuery } from "@tanstack/react-query";
+import { useMemo } from "react";
+import { TbChartPieOff } from "react-icons/tb";
+import { Label, Pie, PieChart } from "recharts";
+import {
+  NameType,
+  Payload,
+  ValueType,
+} from "recharts/types/component/DefaultTooltipContent";
 
 // Local Imports
 import { getMyBooks } from "@/features/my-books/actions/get-my-books";
@@ -9,19 +17,14 @@ import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/shared/components/chart";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { alegreya } from "@/styles/fonts";
-import { useMemo } from "react";
-import { TbChartPieOff } from "react-icons/tb";
-import { Label, Pie, PieChart } from "recharts";
 
 const chartConfig = {
   books: {
     label: "Books",
-    color: "",
   },
   unread: {
     label: "Unread",
@@ -127,10 +130,7 @@ export const Portfolio = () => {
               className="mx-auto aspect-square max-h-[400px]"
             >
               <PieChart>
-                <ChartTooltip
-                  cursor={false}
-                  content={<ChartTooltipContent hideLabel />}
-                />
+                <ChartTooltip cursor={false} content={<CustomTooltip />} />
                 <Pie
                   data={booksData}
                   dataKey="books"
@@ -186,4 +186,40 @@ export const Portfolio = () => {
       </div>
     </div>
   );
+};
+
+const CustomTooltip = ({
+  active = false,
+  payload = [],
+}: {
+  active?: boolean;
+  payload?: Payload<ValueType, NameType>[];
+}) => {
+  const currentPayload = payload && payload[0] ? payload[0].payload : null;
+
+  if (active && currentPayload) {
+    return (
+      <div
+        className={cn(
+          "flex items-center gap-2 rounded-full bg-background px-2 py-2 text-xs shadow-xl",
+        )}
+      >
+        {/* Color */}
+        <div
+          className="size-3 rounded-full"
+          style={{
+            backgroundColor: currentPayload?.payload?.fill,
+          }}
+        />
+
+        {/* Label */}
+        <div className="mr-4 capitalize">{currentPayload?.payload?.status}</div>
+
+        {/* Number of books */}
+        <div className="font-bold">{currentPayload?.payload?.books}</div>
+      </div>
+    );
+  }
+
+  return null;
 };
