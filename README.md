@@ -36,9 +36,9 @@ pnpm install
 cp .env.example .env
 ```
 
-Edit `.env` with your configuration.
+Edit `.env` with your configuration. You can access the backend [here](https://github.com/gozmanthefirst/book-inventory-be.git)
 
-4. Start the development server:
+1. Start the development server:
 
 ```bash
 pnpm dev
