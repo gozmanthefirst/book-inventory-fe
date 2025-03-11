@@ -1,13 +1,11 @@
 "use client";
 
-// External Imports
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useDebounce } from "@uidotdev/usehooks";
 import { useQueryState } from "nuqs";
-import { useState } from "react";
 import { TbSearch } from "react-icons/tb";
 
-// Local Imports
 import { BookListLoader } from "@/features/book/components/book-list-loader";
 import { BookModal } from "@/features/book/components/book-modal";
 import { SingleBook } from "@/features/book/components/single-book";

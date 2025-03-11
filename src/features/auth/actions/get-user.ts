@@ -1,9 +1,7 @@
 "use server";
 
-// External Imports
 import { headers } from "next/headers";
 
-// Local Imports
 import { auth } from "@/shared/lib/auth/auth";
 import { createParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { ServerActionResponse, SessionUser } from "@/shared/types/shared-types";

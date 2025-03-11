@@ -1,9 +1,7 @@
 "use client";
 
-// External Imports
 import { useLockBodyScroll } from "@uidotdev/usehooks";
 
-// Local Imports
 import { Skeleton } from "@/shared/components/skeleton";
 
 export const BookListLoader = () => {

@@ -1,10 +1,8 @@
 "use server";
 
-// External Imports
-import { User } from "better-auth";
 import { headers } from "next/headers";
+import { User } from "better-auth";
 
-// Local Imports
 import { auth } from "@/shared/lib/auth/auth";
 import { createParallelAction } from "../lib/utils/parallel-server-action";
 import { ServerActionResponse } from "../types/shared-types";

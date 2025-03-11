@@ -1,7 +1,5 @@
-// External Imports
 import { Suspense } from "react";
 
-// Local Imports
 import { Search } from "@/features/search/components/search";
 
 const SearchPage = async () => {

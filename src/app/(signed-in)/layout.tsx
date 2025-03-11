@@ -1,13 +1,11 @@
-// External Imports
+import { ReactNode } from "react";
+import { redirect } from "next/navigation";
 import {
   dehydrate,
   HydrationBoundary,
   QueryClient,
 } from "@tanstack/react-query";
-import { redirect } from "next/navigation";
-import { ReactNode } from "react";
 
-// Local Imports
 import { getUser } from "@/features/auth/actions/get-user";
 import { getMyBooks } from "@/features/my-books/actions/get-my-books";
 import { BottomNav } from "@/features/navigation/components/bottom-nav";

@@ -1,4 +1,3 @@
-// External Imports
 import { Alegreya, Geist } from "next/font/google";
 
 export const geist = Geist({

@@ -1,7 +1,5 @@
-// External Imports
 import { Suspense } from "react";
 
-// Local Imports
 import { Portfolio } from "@/features/portfolio/components/portfolio";
 
 const PortfolioPage = async () => {

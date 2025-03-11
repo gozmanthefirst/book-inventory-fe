@@ -1,10 +1,8 @@
 "use server";
 
-// External Imports
 import { ReadStatus } from "@prisma/client";
 import axios from "axios";
 
-// Local Imports
 import { createParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { GoogleBookResponse, SimpleBook } from "@/shared/types/google-book";
 

@@ -1,12 +1,10 @@
 "use client";
 
-// External Imports
-import { motion } from "motion/react";
-import Image from "next/image";
 import { Dispatch, SetStateAction } from "react";
+import Image from "next/image";
+import { motion } from "motion/react";
 import { TbBook2 } from "react-icons/tb";
 
-// Local Imports
 import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
 import { cn } from "@/shared/lib/utils/cn";
 import { SimpleBook } from "@/shared/types/google-book";

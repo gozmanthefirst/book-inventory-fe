@@ -1,7 +1,5 @@
-// External Imports
 import { Suspense } from "react";
 
-// Local Imports
 import { ResetPasswordForm } from "@/features/auth/components/reset-password-form";
 
 const ResetPasswordPage = () => {

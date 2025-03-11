@@ -1,12 +1,12 @@
 "use client";
 
-// External Imports
+import { ReactNode } from "react";
 import {
+  isServer,
   QueryClient,
   QueryClientProvider,
-  isServer,
 } from "@tanstack/react-query";
-import { ReactNode } from "react";
+
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const makeQueryClient = () => {

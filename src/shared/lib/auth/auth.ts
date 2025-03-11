@@ -1,9 +1,7 @@
-// External Imports
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { Resend } from "resend";
 
-// Local Imports
 import { ResetPasswordTemplate } from "@/features/email/components/reset-password-template";
 import { SignUpTemplate } from "@/features/email/components/sign-up-template";
 import db from "../db/prisma";

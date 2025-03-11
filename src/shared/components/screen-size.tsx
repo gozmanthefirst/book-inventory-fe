@@ -1,9 +1,7 @@
 "use client";
 
-// External Imports
 import { useEffect, useState } from "react";
 
-// Local Imports
 import { alegreya } from "@/styles/fonts";
 import { cn } from "../lib/utils/cn";
 
