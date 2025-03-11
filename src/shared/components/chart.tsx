@@ -1,10 +1,8 @@
 "use client";
 
-// External Imports
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 
-// Local Imports
 import { cn } from "../lib/utils/cn";
 
 // Format: { THEME_NAME: CSS_SELECTOR }

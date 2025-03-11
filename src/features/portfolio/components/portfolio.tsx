@@ -1,8 +1,7 @@
 "use client";
 
-// External Imports
-import { useQuery } from "@tanstack/react-query";
 import { useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { TbChartPieOff } from "react-icons/tb";
 import { Label, Pie, PieChart } from "recharts";
 import {
@@ -11,7 +10,6 @@ import {
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
 
-// Local Imports
 import { getMyBooks } from "@/features/my-books/actions/get-my-books";
 import {
   ChartConfig,

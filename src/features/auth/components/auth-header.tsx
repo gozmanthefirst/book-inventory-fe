@@ -1,9 +1,7 @@
-// External Imports
+import { HTMLAttributes, Ref } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { HTMLAttributes, Ref } from "react";
 
-// Local Imports
 import { cn } from "@/shared/lib/utils/cn";
 
 interface HeaderProps extends HTMLAttributes<HTMLDivElement> {

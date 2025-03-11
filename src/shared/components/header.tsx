@@ -1,14 +1,12 @@
 "use client";
 
-// External Imports
-import { AnimatePresence, motion } from "motion/react";
+import { HTMLAttributes, Ref, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { HTMLAttributes, Ref, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { RotatingLines } from "react-loader-spinner";
 
-// Local Imports
 import { authClient } from "@/shared/lib/auth/auth-client";
 import { cn } from "../lib/utils/cn";
 import { Button } from "./button";

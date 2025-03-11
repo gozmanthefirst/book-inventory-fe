@@ -1,9 +1,7 @@
-// External Imports
+import { ButtonHTMLAttributes, forwardRef } from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-import { ButtonHTMLAttributes, forwardRef } from "react";
 
-// Local Imports
 import { cn } from "../lib/utils/cn";
 
 export const buttonVariants = cva(

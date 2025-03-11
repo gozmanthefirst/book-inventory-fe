@@ -1,10 +1,8 @@
 "use server";
 
-// External Imports
 import { ReadStatus } from "@prisma/client";
 import axios from "axios";
 
-// Local Imports
 import { getUser } from "@/shared/actions/get-user";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { ServerActionResponse } from "@/shared/types/shared-types";

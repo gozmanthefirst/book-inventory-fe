@@ -1,13 +1,11 @@
 "use client";
 
-// External Imports
-import { motion } from "motion/react";
+import { useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useRef } from "react";
+import { motion } from "motion/react";
 import { TbBook, TbChartDonut3, TbSearch } from "react-icons/tb";
 
-// Local Imports
 import { cn } from "@/shared/lib/utils/cn";
 
 const NAVS = [

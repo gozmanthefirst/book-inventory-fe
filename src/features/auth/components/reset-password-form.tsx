@@ -1,17 +1,15 @@
 "use client";
 
-// External Imports
-import { useForm, useStore } from "@tanstack/react-form";
-import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { useForm, useStore } from "@tanstack/react-form";
+import { AnimatePresence, motion } from "motion/react";
 import { useQueryState } from "nuqs";
-import { useEffect, useState } from "react";
 import { TbEye, TbEyeOff, TbLockPassword } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 import { z } from "zod";
 
-// Local Imports
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";

@@ -1,11 +1,5 @@
 "use client";
 
-// External Imports
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useStore } from "@tanstack/react-store";
-import { useClickAway } from "@uidotdev/usehooks";
-import { AnimatePresence, motion } from "motion/react";
-import Image from "next/image";
 import {
   Dispatch,
   SetStateAction,
@@ -13,10 +7,14 @@ import {
   useEffect,
   useState,
 } from "react";
+import Image from "next/image";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useStore } from "@tanstack/react-store";
+import { useClickAway } from "@uidotdev/usehooks";
+import { AnimatePresence, motion } from "motion/react";
 import { TbBook2 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
-// Local Imports
 import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
 import { addBook } from "@/features/my-books/actions/add-book";
 import { getMyBooks } from "@/features/my-books/actions/get-my-books";

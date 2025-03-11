@@ -1,9 +1,7 @@
 "use server";
 
-// External Imports
 import axios from "axios";
 
-// Local Imports
 import { getUser } from "@/shared/actions/get-user";
 import {
   createParallelAction,

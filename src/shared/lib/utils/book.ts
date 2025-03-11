@@ -1,4 +1,3 @@
-// Local Imports
 import { SimpleBook } from "@/shared/types/google-book";
 import { ComplexBook } from "@/shared/types/shared-types";
 
