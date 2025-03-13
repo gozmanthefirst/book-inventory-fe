@@ -1,7 +1,12 @@
+;
 // @ts-check
 
 import { FlatCompat } from "@eslint/eslintrc";
 import boundaries from "eslint-plugin-boundaries";
+
+
+
+
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
@@ -56,7 +61,7 @@ const eslintConfig = [
           rules: [
             {
               from: ["global"],
-              allow: ["global"],
+              allow: ["global", "feature"],
             },
 
             // Allow imports from a global folder to a feature file
