@@ -1,14 +1,12 @@
 # Books Inventory Frontend
 
-A modern web application for managing book inventory, built with React.
+A modern web application for managing books, built with Next.js and Google Books API.
 
 ## Features
 
 - Browse book catalog
 - Add, edit, and remove books
 - Search and filter functionality
-- Responsive design for desktop and mobile
-- User authentication and authorization
 
 ## Prerequisites
 
@@ -19,30 +17,30 @@ A modern web application for managing book inventory, built with React.
 
 1. Clone the repository:
 
-```bash
-git clone https://github.com/gozmanthefirst/book-inventory-fe.git
-cd book-inventory-fe
-```
+   ```bash
+   git clone https://github.com/gozmanthefirst/book-inventory-fe.git
+   cd book-inventory-fe
+   ```
 
 2. Install dependencies:
 
-```bash
-pnpm install
-```
+   ```bash
+   pnpm install
+   ```
 
 3. Set up environment variables:
 
-```bash
-cp .env.example .env
-```
+   ```bash
+   cp .env.example .env
+   ```
 
-Edit `.env` with your configuration. You can access the backend [here](https://github.com/gozmanthefirst/book-inventory-be.git)
+   Edit `.env` with your configuration. You can access the backend [here](https://github.com/gozmanthefirst/book-inventory-be.git)
 
-1. Start the development server:
+4. Start the development server:
 
-```bash
-pnpm dev
-```
+   ```bash
+   pnpm dev
+   ```
 
 The application will be available at `http://localhost:3000`
 
