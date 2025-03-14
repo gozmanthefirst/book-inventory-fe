@@ -21,6 +21,8 @@ export const buttonVariants = cva(
           "bg-neutral-200 border border-neutral-300 text-brand-500 shadow-sm lg:hover:bg-neutral-300/70 focus-visible:outline-brand-500",
         grayed:
           "bg-neutral-600 text-foreground shadow-sm lg:hover:bg-neutral-600/90 focus-visible:outline-neutral-600",
+        destructiveOutline:
+          "border border-red-600 bg-red-400/15 text-red-600 shadow-xs lg:hover:bg-red-400/20",
         outline:
           "border border-brand-600 bg-inherit text-brand-500 shadow-xs lg:hover:bg-brand-500/10 lg:hover:border-brand-500",
         ghost:

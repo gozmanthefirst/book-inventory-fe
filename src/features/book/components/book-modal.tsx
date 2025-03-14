@@ -50,7 +50,7 @@ const addButtonCopy = {
 
 const removeButtonCopy = {
   idle: "Remove",
-  loading: <RotatingLines visible width="18" strokeColor="#faf2e8" />,
+  loading: <RotatingLines visible width="18" strokeColor="#dc2626" />,
   success: "Book removed successfully!",
   error: "Something went wrong",
 };
@@ -477,7 +477,9 @@ const BookModalButtons = ({
       {allowBookRemoving ? (
         <Button
           size={size}
-          variant={removeButtonState === "error" ? "destructive" : "brand"}
+          variant={
+            removeButtonState === "error" ? "destructive" : "destructiveOutline"
+          }
           onClick={handleRemoveBook}
           disabled={removeButtonState !== "idle"}
           className="relative w-full gap-2 overflow-hidden"
@@ -499,6 +501,7 @@ const BookModalButtons = ({
     </motion.div>
   );
 };
+
 const AddButton = ({
   size,
   buttonState,
