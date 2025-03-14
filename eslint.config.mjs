@@ -1,12 +1,7 @@
-;
 // @ts-check
 
 import { FlatCompat } from "@eslint/eslintrc";
 import boundaries from "eslint-plugin-boundaries";
-
-
-
-
 
 const compat = new FlatCompat({
   baseDirectory: import.meta.dirname,
