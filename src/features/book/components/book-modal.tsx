@@ -16,9 +16,9 @@ import { TbBook2 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
 import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
-import { addBook } from "@/features/my-books/actions/add-book";
-import { getMyBooks } from "@/features/my-books/actions/get-my-books";
-import { removeBook } from "@/features/my-books/actions/remove-book";
+import { addBook } from "@/features/my-books/api/add-book";
+import { getMyBooks } from "@/features/my-books/api/get-my-books";
+import { removeBook } from "@/features/my-books/api/remove-book";
 import { Button } from "@/shared/components/button";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";

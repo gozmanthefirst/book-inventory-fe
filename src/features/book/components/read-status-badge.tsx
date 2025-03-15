@@ -8,7 +8,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { TbCircleCheck, TbExclamationCircle } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
-import { updateBook } from "@/features/my-books/actions/update-book";
+import { updateBook } from "@/features/my-books/api/update-book";
 import { cn } from "@/shared/lib/utils/cn";
 import { readStatusDdStore } from "@/shared/store";
 import { SimpleBook } from "@/shared/types/google-book";

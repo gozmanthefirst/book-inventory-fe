@@ -6,8 +6,8 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-import { getUser } from "@/features/auth/actions/get-user";
-import { getMyBooks } from "@/features/my-books/actions/get-my-books";
+import { getUser } from "@/features/auth/api/get-user";
+import { getMyBooks } from "@/features/my-books/api/get-my-books";
 import { BottomNav } from "@/features/navigation/components/bottom-nav";
 import { Container } from "@/shared/components/container";
 import { Header } from "@/shared/components/header";

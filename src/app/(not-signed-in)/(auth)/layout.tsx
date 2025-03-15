@@ -1,7 +1,7 @@
 import { ReactNode } from "react";
 import { redirect } from "next/navigation";
 
-import { getUser } from "@/features/auth/actions/get-user";
+import { getUser } from "@/features/auth/api/get-user";
 import { AuthHeader } from "@/features/auth/components/auth-header";
 import { Container } from "@/shared/components/container";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";

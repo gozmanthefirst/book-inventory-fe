@@ -10,7 +10,7 @@ import {
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
 
-import { getMyBooks } from "@/features/my-books/actions/get-my-books";
+import { getMyBooks } from "@/features/my-books/api/get-my-books";
 import {
   ChartConfig,
   ChartContainer,

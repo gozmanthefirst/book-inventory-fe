@@ -9,7 +9,7 @@ import { GoogleBookResponse, SimpleBook } from "@/shared/types/google-book";
 const API_BASE = "https://www.googleapis.com/books/v1/volumes";
 
 export const searchBook = createParallelAction(
-  async (query: string): Promise<SimpleBook[]> => {
+  async (query: string): Promise<SimpleBook[] | undefined> => {
     try {
       const response = await axios.get<GoogleBookResponse>(API_BASE, {
         params: {
@@ -60,8 +60,15 @@ export const searchBook = createParallelAction(
 
       return result;
     } catch (error) {
-      console.error("Google Books API error:", error);
-      throw new Error("Failed to fetch books");
+      if (axios.isAxiosError(error)) {
+        const axiosError = error.response?.data;
+        console.error("Error adding book:", axiosError);
+        return [];
+      }
+
+      // Handle unexpected errors
+      console.error("Unexpected error:", error);
+      return [];
     }
   },
 );

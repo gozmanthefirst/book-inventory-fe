@@ -12,7 +12,7 @@ import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
 import { alegreya } from "@/styles/fonts";
-import { getMyBooks } from "../actions/get-my-books";
+import { getMyBooks } from "../api/get-my-books";
 
 export const MyBooks = () => {
   const [selectedBook, setSelectedBook] = useState<SimpleBook | null>(null);

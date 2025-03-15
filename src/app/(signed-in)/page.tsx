@@ -1,7 +1,7 @@
 import { redirect } from "next/navigation";
 
-import { getUser } from "@/features/auth/actions/get-user";
-import { getMyBooks } from "@/features/my-books/actions/get-my-books";
+import { getUser } from "@/features/auth/api/get-user";
+import { getMyBooks } from "@/features/my-books/api/get-my-books";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 
 const HomePage = async () => {

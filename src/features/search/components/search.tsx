@@ -9,7 +9,7 @@ import { TbSearch } from "react-icons/tb";
 import { BookListLoader } from "@/features/book/components/book-list-loader";
 import { BookModal } from "@/features/book/components/book-modal";
 import { SingleBook } from "@/features/book/components/single-book";
-import { searchBook } from "@/features/search/actions/search-book";
+import { searchBook } from "@/features/search/api/search-book";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
 import { cn } from "@/shared/lib/utils/cn";

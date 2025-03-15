@@ -30,3 +30,9 @@ export type ComplexBook = Prisma.BookGetPayload<{
     genres: true;
   };
 }>;
+
+export type BackendError = {
+  status: "error";
+  code: string;
+  details: string | string[];
+};
