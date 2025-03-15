@@ -4,15 +4,15 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { TbBooksOff, TbExclamationCircle } from "react-icons/tb";
 
-import { BookListLoader } from "@/features/book/components/book-list-loader";
-import { BookModal } from "@/features/book/components/book-modal";
-import { SingleBook } from "@/features/book/components/single-book";
+import { BookListLoader } from "@/shared/components/book-list-loader";
+import { BookModal } from "@/shared/components/book-modal";
+import { SingleBook } from "@/shared/components/single-book";
 import { complexBookToSimpleBook } from "@/shared/lib/utils/book";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
 import { alegreya } from "@/styles/fonts";
-import { getMyBooks } from "../api/get-my-books";
+import { getMyBooks } from "../../../shared/api/get-my-books";
 
 export const MyBooks = () => {
   const [selectedBook, setSelectedBook] = useState<SimpleBook | null>(null);

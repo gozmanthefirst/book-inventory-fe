@@ -6,12 +6,12 @@ import { useDebounce } from "@uidotdev/usehooks";
 import { useQueryState } from "nuqs";
 import { TbSearch } from "react-icons/tb";
 
-import { BookListLoader } from "@/features/book/components/book-list-loader";
-import { BookModal } from "@/features/book/components/book-modal";
-import { SingleBook } from "@/features/book/components/single-book";
 import { searchBook } from "@/features/search/api/search-book";
+import { BookListLoader } from "@/shared/components/book-list-loader";
+import { BookModal } from "@/shared/components/book-modal";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
+import { SingleBook } from "@/shared/components/single-book";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";

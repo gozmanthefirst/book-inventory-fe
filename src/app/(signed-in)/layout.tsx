@@ -7,8 +7,8 @@ import {
 } from "@tanstack/react-query";
 
 import { getUser } from "@/features/auth/api/get-user";
-import { getMyBooks } from "@/features/my-books/api/get-my-books";
 import { BottomNav } from "@/features/navigation/components/bottom-nav";
+import { getMyBooks } from "@/shared/api/get-my-books";
 import { Container } from "@/shared/components/container";
 import { Header } from "@/shared/components/header";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";

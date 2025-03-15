@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { MyBooks } from "@/features/my-books/components/my-books";
+import { MyBooks } from "@/features/book/components/my-books";
 
 const MyBooksPage = async () => {
   return (

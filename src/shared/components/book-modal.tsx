@@ -15,10 +15,10 @@ import { AnimatePresence, motion } from "motion/react";
 import { TbBook2 } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
+import { addBook } from "@/features/book/api/add-book";
+import { removeBook } from "@/features/book/api/remove-book";
 import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
-import { addBook } from "@/features/my-books/api/add-book";
-import { getMyBooks } from "@/features/my-books/api/get-my-books";
-import { removeBook } from "@/features/my-books/api/remove-book";
+import { getMyBooks } from "@/shared/api/get-my-books";
 import { Button } from "@/shared/components/button";
 import { cn } from "@/shared/lib/utils/cn";
 import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
@@ -316,7 +316,7 @@ export const BookModal = ({
                         duration: 0.5,
                         bounce: 0.2,
                       }}
-                      className="mt-2 max-h-[15dvh] overflow-auto text-[13px]/[18px] text-neutral-600 sm:max-h-[20dvh] smd:mt-2 smd:max-h-[25dvh] md:max-h-auto md:text-sm"
+                      className="md:max-h-auto mt-2 max-h-[15dvh] overflow-auto text-[13px]/[18px] text-neutral-600 sm:max-h-[20dvh] smd:mt-2 smd:max-h-[25dvh] md:text-sm"
                     >
                       {book?.description}
                     </motion.p>
@@ -515,9 +515,6 @@ const AddButton = ({
 }) => {
   // Add local state
   const [localDropdownOpen, setLocalDropdownOpen] = useState(false);
-
-  // Keep global state for modal overlay
-  const readStatusDdOpen = useStore(readStatusDdStore);
 
   const readStatusDdRef = useClickAway<HTMLDivElement>(() => {
     setLocalDropdownOpen(false);

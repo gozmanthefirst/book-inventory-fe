@@ -2,13 +2,12 @@
 
 import { Dispatch, SetStateAction, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useStore } from "@tanstack/react-store";
 import { useClickAway } from "@uidotdev/usehooks";
 import { AnimatePresence, motion } from "motion/react";
 import { TbCircleCheck, TbExclamationCircle } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
-import { updateBook } from "@/features/my-books/api/update-book";
+import { updateBook } from "@/features/book/api/update-book";
 import { cn } from "@/shared/lib/utils/cn";
 import { readStatusDdStore } from "@/shared/store";
 import { SimpleBook } from "@/shared/types/google-book";
@@ -36,9 +35,6 @@ export const ReadStatusBadge = ({
   // Add local state for this specific badge's dropdown
   const [localDropdownOpen, setLocalDropdownOpen] = useState(false);
 
-  // Get global state for modal overlay
-  const readStatusDdOpen = useStore(readStatusDdStore);
-
   // Close modal when a anywhere outside the modal is clicked
   const readStatusDdRef = useClickAway<HTMLDivElement>(() => {
     setLocalDropdownOpen(false);
@@ -50,8 +46,6 @@ export const ReadStatusBadge = ({
   // Function to update book
   const handleUpdateBook = async (readStatus: ReadStatus) => {
     if (!book) return;
-
-    const bookId = book.id;
 
     try {
       setUpdateIconStates((prev) => ({

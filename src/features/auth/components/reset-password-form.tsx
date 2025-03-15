@@ -44,7 +44,7 @@ const buttonCopy = {
 };
 
 export const ResetPasswordForm = () => {
-  const [token, setToken] = useQueryState("token");
+  const [token] = useQueryState("token");
 
   const [showPwd, setShowPwd] = useState(false);
   const [showConfirmPwd, setShowConfirmPwd] = useState(false);
@@ -207,7 +207,7 @@ export const ResetPasswordForm = () => {
 
       {formErrors.onChange ? (
         <div className="-mt-4 flex items-center gap-1 text-xs text-red-600">
-          {`${(formErrors.onChange as string)?.split(", ")[0]}`}
+          {Object.values(formErrors.onChange)[0]?.[0]?.message}
         </div>
       ) : null}
 

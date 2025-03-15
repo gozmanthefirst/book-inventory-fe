@@ -10,7 +10,7 @@ import {
   ValueType,
 } from "recharts/types/component/DefaultTooltipContent";
 
-import { getMyBooks } from "@/features/my-books/api/get-my-books";
+import { getMyBooks } from "@/shared/api/get-my-books";
 import {
   ChartConfig,
   ChartContainer,
@@ -40,11 +40,7 @@ const chartConfig = {
 
 export const Portfolio = () => {
   // Get my books
-  const {
-    data: queryData,
-    isLoading,
-    isError,
-  } = useQuery({
+  const { data: queryData } = useQuery({
     queryKey: ["my-books"],
     queryFn: () => runParallelAction(getMyBooks()),
   });
