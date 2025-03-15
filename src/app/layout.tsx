@@ -9,6 +9,8 @@ import { geist } from "@/styles/fonts";
 
 import "@/styles/globals.css";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Book Inventory",
   description: "Book Inventory",
