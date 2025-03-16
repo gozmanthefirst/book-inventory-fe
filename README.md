@@ -46,6 +46,7 @@ The application will be available at `http://localhost:3000`
 
 ## Future Features
 
+- Dark mode
 - Form for adding books not found via search
 - Popular genres visualization
 - Reading trends analysis
