@@ -5,21 +5,20 @@ import { handleApiError } from "@/shared/utils/handle-api-error";
 
 const API_BASE = process.env.BACKEND_URL || "";
 
-// get user
-export const getUser = createServerFn({
-  method: "GET",
+// logout user
+export const logoutUser = createServerFn({
+  method: "POST",
 }).handler(async () => {
   try {
-    const response = await axios.get(`${API_BASE}/user/me`);
+    await axios.post(`${API_BASE}/auth/logout`);
 
     return {
       status: "success",
-      details: "User gotten!",
-      data: response.data.data,
+      details: "User successfully logged out!",
     };
   } catch (error) {
     return handleApiError(error, {
-      errorDescription: "Error getting user",
+      errorDescription: "Error logging user out",
     });
   }
 });
