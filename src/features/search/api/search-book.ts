@@ -1,10 +1,8 @@
-"use server";
-
 import { ReadStatus } from "@prisma/client";
 import axios from "axios";
 
-import { createParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { GoogleBookResponse, SimpleBook } from "@/shared/types/google-book";
+import { createParallelAction } from "@/shared/utils/parallel-server-action";
 
 const API_BASE = "https://www.googleapis.com/books/v1/volumes";
 
@@ -43,7 +41,6 @@ export const searchBook = createParallelAction(
             categories: book.volumeInfo.categories,
             image: book.volumeInfo.imageLinks?.thumbnail || "",
           };
-
           return formattedBook;
         },
       );

@@ -1,18 +1,18 @@
-import { createServerFn } from "@tanstack/react-start";
+"use server";
+
 import axios from "axios";
 
+import { ServerActionResponse } from "@/shared/types/shared-types";
 import { handleApiError } from "@/shared/utils/handle-api-error";
+import { createParallelAction } from "@/shared/utils/parallel-server-action";
 
-const API_BASE = process.env.BACKEND_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
 // verify email
-export const verifyEmail = createServerFn({
-  method: "GET",
-})
-  .validator((token: string) => token)
-  .handler(async ({ data: token }) => {
+export const verifyEmail = createParallelAction(
+  async (data: { token: string }): Promise<ServerActionResponse> => {
     try {
-      await axios.get(`${API_BASE}/auth/verify-email?token=${token}`);
+      await axios.get(`${API_BASE}/auth/verify-email?token=${data.token}`);
 
       return {
         status: "success",
@@ -23,4 +23,5 @@ export const verifyEmail = createServerFn({
         errorDescription: "Error verifying email",
       });
     }
-  });
+  },
+);

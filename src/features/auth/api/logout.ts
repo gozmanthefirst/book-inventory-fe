@@ -1,14 +1,14 @@
-import { createServerFn } from "@tanstack/react-start";
+"use server";
+
 import axios from "axios";
 
+import { ServerActionResponse } from "@/shared/types/shared-types";
 import { handleApiError } from "@/shared/utils/handle-api-error";
 
-const API_BASE = process.env.BACKEND_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
 // logout user
-export const logoutUser = createServerFn({
-  method: "POST",
-}).handler(async () => {
+export const logoutUser = async (): Promise<ServerActionResponse> => {
   try {
     await axios.post(`${API_BASE}/auth/logout`);
 
@@ -21,4 +21,4 @@ export const logoutUser = createServerFn({
       errorDescription: "Error logging user out",
     });
   }
-});
+};

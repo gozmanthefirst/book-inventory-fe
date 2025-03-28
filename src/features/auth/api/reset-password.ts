@@ -1,36 +1,31 @@
-import { createServerFn } from "@tanstack/react-start";
+"use server";
+
 import axios from "axios";
 
+import { ServerActionResponse } from "@/shared/types/shared-types";
 import { handleApiError } from "@/shared/utils/handle-api-error";
 
-const API_BASE = process.env.BACKEND_URL || "";
+const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
-type ResetPasswordData = {
+export const resetPassword = async (data: {
   token: string;
   password: string;
   confirmPassword: string;
+}): Promise<ServerActionResponse> => {
+  try {
+    await axios.post(`${API_BASE}/auth/reset-password`, {
+      token: data.token,
+      password: data.password,
+      confirmPassword: data.confirmPassword,
+    });
+
+    return {
+      status: "success",
+      details: "Password successfully reset!",
+    };
+  } catch (error) {
+    return handleApiError(error, {
+      errorDescription: "Error resetting password",
+    });
+  }
 };
-
-// reset password
-export const resetPassword = createServerFn({
-  method: "POST",
-})
-  .validator((data: ResetPasswordData) => data)
-  .handler(async ({ data }) => {
-    try {
-      await axios.post(`${API_BASE}/auth/reset-password`, {
-        token: data.token,
-        password: data.password,
-        confirmPassword: data.confirmPassword,
-      });
-
-      return {
-        status: "success",
-        details: "Password successfully reset!",
-      };
-    } catch (error) {
-      return handleApiError(error, {
-        errorDescription: "Error resetting password",
-      });
-    }
-  });
