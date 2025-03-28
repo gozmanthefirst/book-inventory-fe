@@ -2,7 +2,7 @@ import * as React from "react";
 import { Ref } from "react";
 import { ValidationError } from "@tanstack/react-form";
 
-import { cn } from "../lib/utils/cn";
+import { cn } from "../utils/cn";
 
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   ref?: Ref<HTMLInputElement>;

@@ -5,7 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { TbBook, TbChartDonut3, TbSearch } from "react-icons/tb";
 
 import { Tabs, TabsList, TabsTrigger } from "@/shared/components/tabs";
-import { cn } from "@/shared/lib/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 const NAVS = [
   {

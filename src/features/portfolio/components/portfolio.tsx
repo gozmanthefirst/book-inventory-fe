@@ -16,8 +16,8 @@ import {
   ChartContainer,
   ChartTooltip,
 } from "@/shared/components/chart";
-import { cn } from "@/shared/lib/utils/cn";
-import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
+import { cn } from "@/shared/utils/cn";
+import { runParallelAction } from "@/shared/utils/parallel-server-action";
 import { alegreya } from "@/styles/fonts";
 
 const chartConfig = {

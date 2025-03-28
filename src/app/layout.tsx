@@ -1,10 +1,11 @@
 import { ReactNode } from "react";
 import type { Metadata } from "next";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
+import { Toaster } from "sonner";
 
 import QueryProvider from "@/providers/query-provider";
 import { ScreenSize } from "@/shared/components/screen-size";
-import { cn } from "@/shared/lib/utils/cn";
+import { cn } from "@/shared/utils/cn";
 import { geist } from "@/styles/fonts";
 
 import "@/styles/globals.css";
@@ -31,7 +32,10 @@ const RootLayout = async ({ children }: Props) => {
       >
         <NuqsAdapter>
           <ScreenSize />
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            {children}
+            <Toaster richColors />
+          </QueryProvider>
         </NuqsAdapter>
       </body>
     </html>

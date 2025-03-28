@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 
 import { alegreya } from "@/styles/fonts";
-import { cn } from "../lib/utils/cn";
+import { cn } from "../utils/cn";
 
 export const ScreenSize = () => {
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });

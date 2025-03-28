@@ -2,7 +2,7 @@ import { HTMLAttributes, Ref } from "react";
 import Image from "next/image";
 import Link from "next/link";
 
-import { cn } from "@/shared/lib/utils/cn";
+import { cn } from "@/shared/utils/cn";
 
 interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
   ref?: Ref<HTMLDivElement>;

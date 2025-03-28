@@ -20,11 +20,10 @@ import { removeBook } from "@/features/book/api/remove-book";
 import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
 import { getMyBooks } from "@/shared/api/get-my-books";
 import { Button } from "@/shared/components/button";
-import { cn } from "@/shared/lib/utils/cn";
-import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
-import { readStatusDdStore } from "@/shared/store";
+import { readStatusDdStore } from "@/shared/lib/store";
 import { SimpleBook } from "@/shared/types/google-book";
-import { ServerActionResponse } from "@/shared/types/shared-types";
+import { cn } from "@/shared/utils/cn";
+import { runParallelAction } from "@/shared/utils/parallel-server-action";
 import { alegreya } from "@/styles/fonts";
 
 const MotionTbBook2 = motion.create(TbBook2);
@@ -133,7 +132,7 @@ export const BookModal = ({
     try {
       updateButtonState(bookId, "add", "loading");
 
-      const response: ServerActionResponse = await addBook({
+      const response = await addBook({
         ...book,
         readStatus,
       });
@@ -175,7 +174,7 @@ export const BookModal = ({
     try {
       updateButtonState(bookId, "remove", "loading");
 
-      const response: ServerActionResponse = await removeBook(book);
+      const response = await removeBook(book);
 
       if (response.status === "error") {
         updateButtonState(bookId, "remove", "error");

@@ -11,23 +11,26 @@ import { BottomNav } from "@/features/navigation/components/bottom-nav";
 import { getMyBooks } from "@/shared/api/get-my-books";
 import { Container } from "@/shared/components/container";
 import { Header } from "@/shared/components/header";
-import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
+import { runParallelAction } from "@/shared/utils/parallel-server-action";
 
 interface Props {
   children: ReactNode;
 }
 
 const BooksLayout = async ({ children }: Props) => {
-  const [{ data: myBooks }, { data: user }] = await Promise.all([
-    runParallelAction(getMyBooks()),
+  const queryClient = new QueryClient();
+
+  const [{ data: user }, { data: myBooks }] = await Promise.all([
     runParallelAction(getUser()),
+    runParallelAction(getMyBooks()),
   ]);
+
+  console.log(user);
+  console.log(myBooks);
 
   if (!user) {
     redirect("/sign-in");
   }
-
-  const queryClient = new QueryClient();
 
   queryClient.setQueryData(["my-books"], { data: myBooks });
   queryClient.setQueryData(["user"], { data: user });

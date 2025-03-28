@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getUser } from "@/features/auth/api/get-user";
 import { AuthHeader } from "@/features/auth/components/auth-header";
 import { Container } from "@/shared/components/container";
-import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
+import { runParallelAction } from "@/shared/utils/parallel-server-action";
 
 interface Props {
   children: ReactNode;
@@ -12,6 +12,8 @@ interface Props {
 
 const AuthLayout = async ({ children }: Props) => {
   const { data: user } = await runParallelAction(getUser());
+
+  console.log(user);
 
   if (user) {
     redirect("/search");

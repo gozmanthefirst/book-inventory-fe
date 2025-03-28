@@ -1,6 +1,6 @@
 import { HTMLAttributes, Ref } from "react";
 
-import { cn } from "../lib/utils/cn";
+import { cn } from "../utils/cn";
 
 interface InputIconProps extends HTMLAttributes<HTMLDivElement> {
   ref?: Ref<HTMLDivElement>;

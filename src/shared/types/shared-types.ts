@@ -1,28 +1,30 @@
-import { Prisma } from "@prisma/client";
+import { Book, Prisma, User } from "@prisma/client";
 
 export type ServerActionResponse<T = undefined> = T extends undefined
-  ? {
-      status: "success" | "error" | "info";
-      details: string;
-      data?: never;
-    }
-  : {
-      status: "success" | "error" | "info";
-      details: string;
-      data: T;
-    };
-
-export type SessionUser =
-  | {
-      id: string;
-      createdAt: Date;
-      updatedAt: Date;
-      email: string;
-      emailVerified: boolean;
-      name: string;
-      image?: string | null | undefined;
-    }
-  | undefined;
+  ?
+      | {
+          status: "success" | "info";
+          details: string;
+          data?: never;
+        }
+      | {
+          status: "error";
+          details: string;
+          errorCode: string;
+          data?: never;
+        }
+  :
+      | {
+          status: "success" | "info";
+          details: string;
+          data: T;
+        }
+      | {
+          status: "error";
+          details: string;
+          errorCode: string;
+          data: T;
+        };
 
 export type ComplexBook = Prisma.BookGetPayload<{
   include: {
@@ -31,8 +33,23 @@ export type ComplexBook = Prisma.BookGetPayload<{
   };
 }>;
 
-export type BackendError = {
-  status: "error";
-  code: string;
-  details: string | string[];
+export type BackendError<T = undefined> = T extends undefined
+  ? {
+      status: "error";
+      code: string;
+      details: string | string[];
+      data?: never;
+    }
+  : {
+      status: "error";
+      code: string;
+      details: string | string[];
+      data: T;
+    };
+
+export type UserCustom = {
+  id: User["id"];
+  email: User["email"];
+  name: User["name"];
+  books: Book[];
 };

@@ -2,24 +2,20 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { useForm, useStore } from "@tanstack/react-form";
 import { AnimatePresence, motion } from "motion/react";
-import {
-  TbAt,
-  TbBrandGoogleFilled,
-  TbEye,
-  TbEyeOff,
-  TbLockPassword,
-} from "react-icons/tb";
+import { TbAt, TbEye, TbEyeOff, TbLockPassword } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
-import { authClient } from "@/shared/lib/auth/auth-client";
-import { cn } from "@/shared/lib/utils/cn";
+import { cn } from "@/shared/utils/cn";
 import { alegreya } from "@/styles/fonts";
+import { loginUser } from "../api/login";
 
 const signInSchema = z.object({
   email: z
@@ -72,44 +68,47 @@ export const SignInForm = () => {
     },
     onSubmit: async ({ value }) => {
       try {
-        await authClient.signIn.email(
-          {
-            email: value.email,
-            password: value.password,
-            callbackURL: "/search",
-          },
-          {
-            onRequest() {
-              setButtonState("loading");
-            },
-            onError(ctx) {
-              if (process.env.NODE_ENV !== "production") {
-                console.error(ctx.error);
-              }
+        setButtonState("loading");
 
-              if (ctx.error.status === 403) {
-                setButtonState("verifyEmail");
-              } else if (ctx.error.status === 401) {
-                setButtonState("invalidCredentials");
-              } else {
-                setButtonState("error");
-              }
-            },
-            onSuccess() {
-              setButtonState("success");
-            },
-          },
-        );
-      } catch (error) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error(error);
+        const signInResponse = await loginUser({
+          email: value.email,
+          password: value.password,
+        });
+
+        // if (!signInResponse) {
+        //   toast.error("Something went wrong!");
+        //   setButtonState("error");
+        //   return;
+        // }
+
+        if (signInResponse.status === "error") {
+          toast.error(signInResponse.details);
+          setButtonState(
+            signInResponse.errorCode === "INVALID_CREDENTIALS"
+              ? "invalidCredentials"
+              : signInResponse.errorCode === "EMAIL_NOT_VERIFIED"
+                ? "verifyEmail"
+                : "error",
+          );
+          return;
         }
 
+        if (signInResponse.status === "success") {
+          setButtonState("success");
+          setTimeout(() => {
+            redirect("/search");
+          }, 1000);
+        }
+      } catch (err) {
+        console.error(`An unexpected error occurred: ${err}`);
+        toast.error("An unexpected error occurred");
         setButtonState("error");
       } finally {
-        setTimeout(() => {
-          setButtonState("idle");
-        }, 3000);
+        if (buttonState !== "success") {
+          setTimeout(() => {
+            setButtonState("idle");
+          }, 3000);
+        }
       }
     },
   });
@@ -242,98 +241,98 @@ export const SignInForm = () => {
         </Link>
       </div>
 
-      <div className="relative flex items-center justify-center">
+      {/* <div className="relative flex items-center justify-center">
         <div className="my-2 h-px w-full bg-neutral-300" />
         <div className="absolute top-0.5 bg-background px-2 text-xs font-bold text-neutral-400">
           OR
         </div>
       </div>
 
-      <GoogleButton />
+      <GoogleButton /> */}
     </div>
   );
 };
 
-const googleButtonCopy = {
-  idle: (
-    <div className="flex items-center gap-2">
-      <TbBrandGoogleFilled size={18} />
-      <span className="mt-0.5">Continue with Google</span>
-    </div>
-  ),
-  loading: <RotatingLines visible width="18" strokeColor="#005cff" />,
-  success: "Signing in...",
-  error: "Something went wrong",
-};
+// const googleButtonCopy = {
+//   idle: (
+//     <div className="flex items-center gap-2">
+//       <TbBrandGoogleFilled size={18} />
+//       <span className="mt-0.5">Continue with Google</span>
+//     </div>
+//   ),
+//   loading: <RotatingLines visible width="18" strokeColor="#005cff" />,
+//   success: "Signing in...",
+//   error: "Something went wrong",
+// };
 
-const GoogleButton = () => {
-  const [buttonState, setButtonState] = useState<
-    "idle" | "loading" | "success" | "error"
-  >("idle");
+// const GoogleButton = () => {
+//   const [buttonState, setButtonState] = useState<
+//     "idle" | "loading" | "success" | "error"
+//   >("idle");
 
-  const variants = {
-    initial: { opacity: 0, y: -40 },
-    visible: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: 40 },
-  };
+//   const variants = {
+//     initial: { opacity: 0, y: -40 },
+//     visible: { opacity: 1, y: 0 },
+//     exit: { opacity: 0, y: 40 },
+//   };
 
-  const handleGoogleSignIn = async () => {
-    try {
-      await authClient.signIn.social(
-        {
-          provider: "google",
-        },
-        {
-          onRequest() {
-            setButtonState("loading");
-          },
-          onError(ctx) {
-            if (process.env.NODE_ENV !== "production") {
-              console.error(ctx.error);
-            }
+//   const handleGoogleSignIn = async () => {
+//     try {
+//       await authClient.signIn.social(
+//         {
+//           provider: "google",
+//         },
+//         {
+//           onRequest() {
+//             setButtonState("loading");
+//           },
+//           onError(ctx) {
+//             if (process.env.NODE_ENV !== "production") {
+//               console.error(ctx.error);
+//             }
 
-            setButtonState("error");
-          },
-          onSuccess() {
-            setButtonState("success");
-          },
-        },
-      );
-    } catch (error) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error(error);
-      }
+//             setButtonState("error");
+//           },
+//           onSuccess() {
+//             setButtonState("success");
+//           },
+//         },
+//       );
+//     } catch (error) {
+//       if (process.env.NODE_ENV !== "production") {
+//         console.error(error);
+//       }
 
-      setButtonState("error");
-    } finally {
-      setTimeout(() => {
-        setButtonState("idle");
-      }, 3000);
-    }
-  };
+//       setButtonState("error");
+//     } finally {
+//       setTimeout(() => {
+//         setButtonState("idle");
+//       }, 3000);
+//     }
+//   };
 
-  return (
-    <div>
-      <Button
-        size={"lg"}
-        variant={"secondary"}
-        disabled={buttonState !== "idle"}
-        onClick={handleGoogleSignIn}
-        className="relative w-full gap-2 overflow-hidden"
-      >
-        <AnimatePresence mode="popLayout" initial={false}>
-          <motion.div
-            key={buttonState}
-            transition={{ type: "spring", bounce: 0, duration: 0.3 }}
-            initial="initial"
-            animate="visible"
-            exit="exit"
-            variants={variants}
-          >
-            {googleButtonCopy[buttonState]}
-          </motion.div>
-        </AnimatePresence>
-      </Button>
-    </div>
-  );
-};
+//   return (
+//     <div>
+//       <Button
+//         size={"lg"}
+//         variant={"secondary"}
+//         disabled={buttonState !== "idle"}
+//         onClick={handleGoogleSignIn}
+//         className="relative w-full gap-2 overflow-hidden"
+//       >
+//         <AnimatePresence mode="popLayout" initial={false}>
+//           <motion.div
+//             key={buttonState}
+//             transition={{ type: "spring", bounce: 0, duration: 0.3 }}
+//             initial="initial"
+//             animate="visible"
+//             exit="exit"
+//             variants={variants}
+//           >
+//             {googleButtonCopy[buttonState]}
+//           </motion.div>
+//         </AnimatePresence>
+//       </Button>
+//     </div>
+//   );
+// };

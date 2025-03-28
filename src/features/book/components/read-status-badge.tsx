@@ -8,10 +8,10 @@ import { TbCircleCheck, TbExclamationCircle } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
 
 import { updateBook } from "@/features/book/api/update-book";
-import { cn } from "@/shared/lib/utils/cn";
-import { readStatusDdStore } from "@/shared/store";
+import { readStatusDdStore } from "@/shared/lib/store";
 import { SimpleBook } from "@/shared/types/google-book";
 import { ServerActionResponse } from "@/shared/types/shared-types";
+import { cn } from "@/shared/utils/cn";
 
 type ReadStatus = "UNREAD" | "READING" | "READ";
 
@@ -53,10 +53,10 @@ export const ReadStatusBadge = ({
         [book.id]: "loading",
       }));
 
-      const response: ServerActionResponse = await updateBook(
-        book.id,
+      const response: ServerActionResponse = await updateBook({
+        bookId: book.id,
         readStatus,
-      );
+      });
 
       if (response.status === "error") {
         return setUpdateIconStates((prev) => ({

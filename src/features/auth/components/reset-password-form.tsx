@@ -8,14 +8,15 @@ import { AnimatePresence, motion } from "motion/react";
 import { useQueryState } from "nuqs";
 import { TbEye, TbEyeOff, TbLockPassword } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
-import { authClient } from "@/shared/lib/auth/auth-client";
-import { cn } from "@/shared/lib/utils/cn";
+import { cn } from "@/shared/utils/cn";
 import { alegreya } from "@/styles/fonts";
+import { resetPassword } from "../api/reset-password";
 
 const resetPwdSchema = z
   .object({
@@ -67,39 +68,37 @@ export const ResetPasswordForm = () => {
       onChange: resetPwdSchema,
     },
     onSubmit: async ({ value }) => {
-      try {
-        if (!token) return;
-
-        await authClient.resetPassword(
-          {
-            newPassword: value.password,
-            token,
-          },
-          {
-            onRequest() {
-              setButtonState("loading");
-            },
-            onError(ctx) {
-              if (process.env.NODE_ENV !== "production") {
-                console.error(ctx.error);
-              }
-
-              setButtonState("error");
-            },
-            onSuccess() {
-              setButtonState("success");
-              redirect("/sign-in");
-            },
-          },
-        );
-      } catch (error) {
-        console.error(error);
-        setButtonState("error");
-      } finally {
-        setTimeout(() => {
-          setButtonState("idle");
-        }, 3000);
+      if (!token) {
+        redirect("/sign-in");
       }
+
+      // Make the button load
+      setButtonState("loading");
+
+      // Reset password
+      const resetPwdResponse = await resetPassword({
+        data: {
+          token,
+          password: value.password,
+          confirmPassword: value.confirmPassword,
+        },
+      });
+
+      if (resetPwdResponse.status === "error") {
+        toast.error(resetPwdResponse.details);
+        setButtonState("error");
+      } else if (resetPwdResponse.status === "success") {
+        setButtonState("success");
+
+        setTimeout(() => {
+          redirect("/sign-in");
+        }, 1000);
+      }
+
+      // Make the button idle
+      setTimeout(() => {
+        setButtonState("idle");
+      }, 3000);
     },
   });
 

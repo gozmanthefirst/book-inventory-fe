@@ -1,12 +1,15 @@
 import axios, { AxiosError } from "axios";
 
-import { BackendError } from "@/shared/types/shared-types";
+import {
+  BackendError,
+  ServerActionResponse,
+} from "@/shared/types/shared-types";
 
-type ErrorResponse = {
-  status: "error";
-  errorCode: string;
-  details: string;
-};
+// type ErrorResponse = {
+//   status: "error";
+//   errorCode: string;
+//   details: string;
+// };
 
 type ErrorHandlerOptions = {
   errorDescription?: string;
@@ -17,7 +20,7 @@ type ErrorHandlerOptions = {
 export function handleApiError(
   error: unknown,
   options: ErrorHandlerOptions = {},
-): ErrorResponse {
+): ServerActionResponse {
   const {
     errorDescription,
     defaultMessage = "Something went wrong.",

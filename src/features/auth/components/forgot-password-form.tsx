@@ -2,17 +2,19 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { useForm, useStore } from "@tanstack/react-form";
 import { AnimatePresence, motion } from "motion/react";
 import { TbAt } from "react-icons/tb";
 import { RotatingLines } from "react-loader-spinner";
+import { toast } from "sonner";
 import { z } from "zod";
 
+import { requestPasswordReset } from "@/features/auth/api/request-password-reset";
 import { Button } from "@/shared/components/button";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
-import { authClient } from "@/shared/lib/auth/auth-client";
-import { cn } from "@/shared/lib/utils/cn";
+import { cn } from "@/shared/utils/cn";
 import { alegreya } from "@/styles/fonts";
 
 const forgotPwdSchema = z.object({
@@ -48,39 +50,29 @@ export const ForgotPasswordForm = () => {
       onChange: forgotPwdSchema,
     },
     onSubmit: async ({ value }) => {
-      try {
-        await authClient.forgetPassword(
-          {
-            email: value.email,
-            redirectTo: "/reset-password",
-          },
-          {
-            onRequest() {
-              setButtonState("loading");
-            },
-            onError(ctx) {
-              if (process.env.NODE_ENV !== "production") {
-                console.error(ctx.error);
-              }
+      // Make the button load
+      setButtonState("loading");
 
-              setButtonState("error");
-            },
-            onSuccess() {
-              setButtonState("success");
-            },
-          },
-        );
-      } catch (error) {
-        if (process.env.NODE_ENV !== "production") {
-          console.error(error);
-        }
+      // Request password reset
+      const forgotPwdResponse = await requestPasswordReset({
+        data: value.email,
+      });
 
+      if (forgotPwdResponse.status === "error") {
+        toast.error(forgotPwdResponse.details);
         setButtonState("error");
-      } finally {
+      } else if (forgotPwdResponse.status === "success") {
+        setButtonState("success");
+
         setTimeout(() => {
-          setButtonState("idle");
-        }, 3000);
+          redirect("/reset-password");
+        }, 1000);
       }
+
+      // Make the button idle
+      setTimeout(() => {
+        setButtonState("idle");
+      }, 3000);
     },
   });
 

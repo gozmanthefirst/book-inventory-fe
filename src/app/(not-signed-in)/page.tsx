@@ -2,12 +2,12 @@ import { redirect } from "next/navigation";
 
 import { getUser } from "@/features/auth/api/get-user";
 import { getMyBooks } from "@/shared/api/get-my-books";
-import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
+import { runParallelAction } from "@/shared/utils/parallel-server-action";
 
 const HomePage = async () => {
-  const [{ data: myBooks }, { data: user }] = await Promise.all([
-    runParallelAction(getMyBooks()),
+  const [{ data: user }, { data: myBooks }] = await Promise.all([
     runParallelAction(getUser()),
+    runParallelAction(getMyBooks()),
   ]);
 
   if (!user) {

@@ -6,8 +6,8 @@ import { motion } from "motion/react";
 import { TbBook2 } from "react-icons/tb";
 
 import { ReadStatusBadge } from "@/features/book/components/read-status-badge";
-import { cn } from "@/shared/lib/utils/cn";
 import { SimpleBook } from "@/shared/types/google-book";
+import { cn } from "@/shared/utils/cn";
 import { alegreya } from "@/styles/fonts";
 
 const MotionTbBook2 = motion.create(TbBook2);

@@ -7,10 +7,10 @@ import { TbBooksOff, TbExclamationCircle } from "react-icons/tb";
 import { BookListLoader } from "@/shared/components/book-list-loader";
 import { BookModal } from "@/shared/components/book-modal";
 import { SingleBook } from "@/shared/components/single-book";
-import { complexBookToSimpleBook } from "@/shared/lib/utils/book";
-import { cn } from "@/shared/lib/utils/cn";
-import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
+import { complexBookToSimpleBook } from "@/shared/lib/book";
 import { SimpleBook } from "@/shared/types/google-book";
+import { cn } from "@/shared/utils/cn";
+import { runParallelAction } from "@/shared/utils/parallel-server-action";
 import { alegreya } from "@/styles/fonts";
 import { getMyBooks } from "../../../shared/api/get-my-books";
 

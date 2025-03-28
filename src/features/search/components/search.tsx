@@ -12,9 +12,9 @@ import { BookModal } from "@/shared/components/book-modal";
 import { Input } from "@/shared/components/input";
 import { InputIcon } from "@/shared/components/input-icon";
 import { SingleBook } from "@/shared/components/single-book";
-import { cn } from "@/shared/lib/utils/cn";
-import { runParallelAction } from "@/shared/lib/utils/parallel-server-action";
 import { SimpleBook } from "@/shared/types/google-book";
+import { cn } from "@/shared/utils/cn";
+import { runParallelAction } from "@/shared/utils/parallel-server-action";
 import { alegreya } from "@/styles/fonts";
 
 export const Search = () => {

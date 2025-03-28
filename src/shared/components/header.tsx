@@ -3,12 +3,13 @@
 import { HTMLAttributes, Ref, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { RotatingLines } from "react-loader-spinner";
+import { toast } from "sonner";
 
-import { authClient } from "@/shared/lib/auth/auth-client";
-import { cn } from "../lib/utils/cn";
+import { logoutUser } from "@/features/auth/api/logout";
+import { cn } from "../utils/cn";
 import { Button } from "./button";
 
 interface HeaderProps extends HTMLAttributes<HTMLDivElement> {
@@ -36,36 +37,27 @@ export const Header = ({ className, ref, ...props }: HeaderProps) => {
   };
 
   const handleSignOut = async () => {
-    try {
-      await authClient.signOut({
-        fetchOptions: {
-          onRequest() {
-            setButtonState("loading");
-          },
-          onError(ctx) {
-            if (process.env.NODE_ENV !== "production") {
-              console.error(ctx.error);
-            }
+    // Make the button load
+    setButtonState("loading");
 
-            setButtonState("error");
-          },
-          onSuccess() {
-            setButtonState("success");
-            router.push("/sign-in");
-          },
-        },
-      });
-    } catch (error) {
-      if (process.env.NODE_ENV !== "production") {
-        console.error(error);
-      }
+    // Logout user
+    const logoutResponse = await logoutUser();
 
+    if (logoutResponse.status === "error") {
+      toast.error(logoutResponse.details);
       setButtonState("error");
-    } finally {
+    } else if (logoutResponse.status === "success") {
+      setButtonState("success");
+
       setTimeout(() => {
-        setButtonState("idle");
-      }, 3000);
+        redirect("/sign-in");
+      }, 1000);
     }
+
+    // Make the button idle
+    setTimeout(() => {
+      setButtonState("idle");
+    }, 3000);
   };
 
   return (
