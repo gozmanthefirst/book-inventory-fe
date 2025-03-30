@@ -10,9 +10,9 @@ const API_BASE = process.env.NEXT_PUBLIC_BACKEND_URL || "";
 
 // verify email
 export const verifyEmail = createParallelAction(
-  async (data: { token: string }): Promise<ServerActionResponse> => {
+  async (token: string): Promise<ServerActionResponse> => {
     try {
-      await axios.get(`${API_BASE}/auth/verify-email?token=${data.token}`);
+      await axios.get(`${API_BASE}/auth/verify-email?token=${token}`);
 
       return {
         status: "success",

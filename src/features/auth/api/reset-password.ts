@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import axios from "axios";
 
 import { ServerActionResponse } from "@/shared/types/shared-types";
@@ -18,6 +19,10 @@ export const resetPassword = async (data: {
       password: data.password,
       confirmPassword: data.confirmPassword,
     });
+
+    // Delete session token cookie if it exists
+    const cookieStore = await cookies();
+    cookieStore.delete("books_gd_session_token");
 
     return {
       status: "success",

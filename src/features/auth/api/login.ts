@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import axios from "axios";
 
 import { ServerActionResponse } from "@/shared/types/shared-types";
@@ -13,9 +14,28 @@ export const loginUser = async (data: {
   password: string;
 }): Promise<ServerActionResponse> => {
   try {
-    await axios.post(`${API_BASE}/auth/login`, {
+    const response = await axios.post(`${API_BASE}/auth/login`, {
       email: data.email,
       password: data.password,
+    });
+
+    const token: string = response.data.data.sessionToken;
+    const expires: Date = new Date(response.data.data.sessionExpires as string);
+
+    // Set the cookie in the browser
+    const cookieStore = await cookies();
+    cookieStore.set({
+      name: "books_gd_session_token",
+      value: token,
+      path: "/",
+      secure: process.env.NODE_ENV === "production",
+      domain:
+        process.env.NODE_ENV === "production"
+          ? "books.gozman.dev"
+          : "localhost",
+      httpOnly: true,
+      expires: expires,
+      sameSite: "strict",
     });
 
     return {
