@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import axios from "axios";
 
 import { SimpleBook } from "@/shared/types/google-book";
@@ -13,19 +14,31 @@ export const addBook = async (
   book: SimpleBook,
 ): Promise<ServerActionResponse> => {
   try {
-    await axios.post(`${API_BASE}/books`, {
-      title: book.title,
-      subtitle: book.subtitle,
-      bookDesc: book.description,
-      imageUrl: book.image,
-      isbn: book.isbn13 || book.isbn10,
-      publisher: book.publisher,
-      publishedDate: book.publishedDate,
-      pageCount: book.pageCount,
-      readStatus: (book.readStatus || "UNREAD").toLowerCase(),
-      authors: book.authors,
-      genres: book.categories,
-    });
+    // Get the session token
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get("books_gd_session_token");
+
+    await axios.post(
+      `${API_BASE}/books`,
+      {
+        title: book.title,
+        subtitle: book.subtitle,
+        bookDesc: book.description,
+        imageUrl: book.image,
+        isbn: book.isbn13 || book.isbn10,
+        publisher: book.publisher,
+        publishedDate: book.publishedDate,
+        pageCount: book.pageCount,
+        readStatus: (book.readStatus || "UNREAD").toLowerCase(),
+        authors: book.authors,
+        genres: book.categories,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken?.value}`,
+        },
+      },
+    );
 
     return {
       status: "success",

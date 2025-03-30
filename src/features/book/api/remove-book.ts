@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import axios from "axios";
 
 import { SimpleBook } from "@/shared/types/google-book";
@@ -13,7 +14,15 @@ export const removeBook = async (
   book: SimpleBook,
 ): Promise<ServerActionResponse> => {
   try {
-    await axios.delete(`${API_BASE}/books/${book.id}`);
+    // Get the session token
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get("books_gd_session_token");
+
+    await axios.delete(`${API_BASE}/books/${book.id}`, {
+      headers: {
+        Authorization: `Bearer ${sessionToken?.value}`,
+      },
+    });
 
     return {
       status: "success",

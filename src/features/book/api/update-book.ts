@@ -1,3 +1,6 @@
+"use server";
+
+import { cookies } from "next/headers";
 import { ReadStatus } from "@prisma/client";
 import axios from "axios";
 
@@ -12,9 +15,21 @@ export const updateBook = async (data: {
   readStatus: ReadStatus;
 }): Promise<ServerActionResponse> => {
   try {
-    await axios.patch(`${API_BASE}/books/${data.bookId}`, {
-      readStatus: data.readStatus || "UNREAD",
-    });
+    // Get the session token
+    const cookieStore = await cookies();
+    const sessionToken = cookieStore.get("books_gd_session_token");
+
+    await axios.patch(
+      `${API_BASE}/books/${data.bookId}`,
+      {
+        readStatus: data.readStatus.toLowerCase() || "unread",
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${sessionToken?.value}`,
+        },
+      },
+    );
 
     return {
       status: "success",
