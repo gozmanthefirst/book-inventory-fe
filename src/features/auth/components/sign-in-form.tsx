@@ -75,12 +75,6 @@ export const SignInForm = () => {
           password: value.password,
         });
 
-        // if (!signInResponse) {
-        //   toast.error("Something went wrong!");
-        //   setButtonState("error");
-        //   return;
-        // }
-
         if (signInResponse.status === "error") {
           toast.error(signInResponse.details);
           setButtonState(

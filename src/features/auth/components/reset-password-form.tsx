@@ -72,33 +72,38 @@ export const ResetPasswordForm = () => {
         redirect("/sign-in");
       }
 
-      // Make the button load
-      setButtonState("loading");
+      try {
+        setButtonState("loading");
 
-      // Reset password
-      const resetPwdResponse = await resetPassword({
-        data: {
+        const resetPwdResponse = await resetPassword({
           token,
           password: value.password,
           confirmPassword: value.confirmPassword,
-        },
-      });
+        });
 
-      if (resetPwdResponse.status === "error") {
-        toast.error(resetPwdResponse.details);
+        if (resetPwdResponse.status === "error") {
+          toast.error(resetPwdResponse.details);
+          setButtonState("error");
+        }
+
+        if (resetPwdResponse.status === "success") {
+          setButtonState("success");
+
+          setTimeout(() => {
+            redirect("/sign-in");
+          }, 1000);
+        }
+      } catch (err) {
+        console.error(`An unexpected error occurred: ${err}`);
+        toast.error("An unexpected error occurred");
         setButtonState("error");
-      } else if (resetPwdResponse.status === "success") {
-        setButtonState("success");
-
-        setTimeout(() => {
-          redirect("/sign-in");
-        }, 1000);
+      } finally {
+        if (buttonState !== "success") {
+          setTimeout(() => {
+            setButtonState("idle");
+          }, 3000);
+        }
       }
-
-      // Make the button idle
-      setTimeout(() => {
-        setButtonState("idle");
-      }, 3000);
     },
   });
 

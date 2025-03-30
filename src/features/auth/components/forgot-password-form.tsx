@@ -50,29 +50,34 @@ export const ForgotPasswordForm = () => {
       onChange: forgotPwdSchema,
     },
     onSubmit: async ({ value }) => {
-      // Make the button load
-      setButtonState("loading");
+      try {
+        setButtonState("loading");
 
-      // Request password reset
-      const forgotPwdResponse = await requestPasswordReset({
-        data: value.email,
-      });
+        const forgotPwdResponse = await requestPasswordReset(value.email);
 
-      if (forgotPwdResponse.status === "error") {
-        toast.error(forgotPwdResponse.details);
+        if (forgotPwdResponse.status === "error") {
+          toast.error(forgotPwdResponse.details);
+          setButtonState("error");
+        }
+
+        if (forgotPwdResponse.status === "success") {
+          setButtonState("success");
+
+          setTimeout(() => {
+            redirect("/reset-password");
+          }, 1000);
+        }
+      } catch (err) {
+        console.error(`An unexpected error occurred: ${err}`);
+        toast.error("An unexpected error occurred");
         setButtonState("error");
-      } else if (forgotPwdResponse.status === "success") {
-        setButtonState("success");
-
-        setTimeout(() => {
-          redirect("/reset-password");
-        }, 1000);
+      } finally {
+        if (buttonState !== "success") {
+          setTimeout(() => {
+            setButtonState("idle");
+          }, 3000);
+        }
       }
-
-      // Make the button idle
-      setTimeout(() => {
-        setButtonState("idle");
-      }, 3000);
     },
   });
 

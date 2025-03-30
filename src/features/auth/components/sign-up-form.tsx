@@ -87,12 +87,6 @@ export const SignUpForm = () => {
           confirmPassword: value.confirmPassword,
         });
 
-        // if (!signUpResponse) {
-        //   toast.error("Something went wrong!");
-        //   setButtonState("error");
-        //   return;
-        // }
-
         if (signUpResponse.status === "error") {
           toast.error(signUpResponse.details);
           setButtonState(
