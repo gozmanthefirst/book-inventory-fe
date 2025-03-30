@@ -3,7 +3,7 @@
 import { HTMLAttributes, Ref, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { redirect, useRouter } from "next/navigation";
+import { redirect } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
 import { RotatingLines } from "react-loader-spinner";
 import { toast } from "sonner";
@@ -24,8 +24,6 @@ const buttonCopy = {
 };
 
 export const Header = ({ className, ref, ...props }: HeaderProps) => {
-  const router = useRouter();
-
   const [buttonState, setButtonState] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");

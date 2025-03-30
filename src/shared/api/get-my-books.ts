@@ -1,5 +1,6 @@
 "use server";
 
+import { cookies } from "next/headers";
 import axios from "axios";
 
 import { ComplexBook, ServerActionResponse } from "@/shared/types/shared-types";
@@ -14,7 +15,15 @@ export const getMyBooks = createParallelAction(
     ServerActionResponse | ServerActionResponse<ComplexBook[]>
   > => {
     try {
-      const response = await axios.get(`${API_BASE}/books`);
+      // Get the session token
+      const cookieStore = await cookies();
+      const sessionToken = cookieStore.get("books_gd_session_token");
+
+      const response = await axios.get(`${API_BASE}/books`, {
+        headers: {
+          Authorization: `Bearer ${sessionToken?.value}`,
+        },
+      });
 
       return {
         status: "success",

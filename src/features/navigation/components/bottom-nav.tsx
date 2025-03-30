@@ -39,7 +39,7 @@ export const BottomNav = () => {
             const Icon = tab.icon;
 
             return (
-              <Link href={tab.value} key={tab.value}>
+              <Link prefetch href={tab.value} key={tab.value}>
                 <TabsTrigger
                   value={tab.value}
                   className={cn(

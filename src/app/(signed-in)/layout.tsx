@@ -25,9 +25,6 @@ const BooksLayout = async ({ children }: Props) => {
     runParallelAction(getMyBooks()),
   ]);
 
-  console.log(user);
-  console.log(myBooks);
-
   if (!user) {
     redirect("/sign-in");
   }

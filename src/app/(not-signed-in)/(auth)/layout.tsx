@@ -13,8 +13,6 @@ interface Props {
 const AuthLayout = async ({ children }: Props) => {
   const { data: user } = await runParallelAction(getUser());
 
-  console.log(user);
-
   if (user) {
     redirect("/search");
   }

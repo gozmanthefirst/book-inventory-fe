@@ -29,7 +29,7 @@ export function handleApiError(
 
   if (axios.isAxiosError(error)) {
     const backendError = (error as AxiosError<BackendError>).response?.data;
-    console.error(`${errorDescription}:`, backendError);
+    console.log(`${errorDescription}:`, backendError);
 
     if (backendError) {
       // Handle specific error codes if provided in errorMapping
@@ -69,7 +69,7 @@ export function handleApiError(
   }
 
   // Handle unexpected errors
-  console.error("Unexpected error:", error);
+  console.log("Unexpected error:", error);
   return {
     status: "error",
     errorCode: "ERROR",
